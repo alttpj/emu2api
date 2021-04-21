@@ -42,8 +42,8 @@
 
     <!--
     <module>endpoint/thrift</module>
-    <module>endpoint/ws</module>
     -->
+    <module>endpoint/ws</module>
 
     <module>server/meecrowave</module>
   </modules>
@@ -72,6 +72,11 @@
         <version>${project.version}</version>
       </dependency>
       <dependency>
+        <groupId>io.github.alttpj.emu2api.endpoint</groupId>
+        <artifactId>emu2api-endpoint-ws</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
         <groupId>io.github.alttpj.emu2api.server</groupId>
         <artifactId>emu2api-server-meecrowave</artifactId>
         <version>${project.version}</version>
@@ -92,6 +97,20 @@
         <artifactId>jakarta.enterprise.cdi-api</artifactId>
         <version>3.0.0</version>
         <scope>provided</scope>
+      </dependency>
+      <!-- JSON-B API -->
+      <dependency>
+        <groupId>jakarta.json.bind</groupId>
+        <artifactId>jakarta.json.bind-api</artifactId>
+        <version>2.0.0</version>
+        <scope>provided</scope>
+      </dependency>
+      <!-- Yasson (JSON-B implementation) -->
+      <dependency>
+        <groupId>org.eclipse</groupId>
+        <artifactId>yasson</artifactId>
+        <version>2.0.2</version>
+        <scope>test</scope>
       </dependency>
 
       <!-- testing -->
