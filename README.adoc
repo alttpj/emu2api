@@ -1,0 +1,15 @@
+= emu2api
+
+An emulator to generic API bridge, suitable for Trackers and Multiworld.
+
+== Description
+
+This is an experimental project which reimplements parts of qusb2snes in java.
+In more detail, this tool will connect to RetroArch and expose two command interfaces:
+
+* One websocket interface (same API like qusb2snes) and
+* An Apache Thrift interface (a binary protocol)
+
+== License
+
+link:LICENSE[Apache License v2].

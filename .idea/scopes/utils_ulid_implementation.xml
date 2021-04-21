@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="utils/ulid/implementation" pattern="src[emu2api-utils-ulid]:io.github.alttpj.emu2api.utils.ulid.ULIDImplementation" />
+</component>

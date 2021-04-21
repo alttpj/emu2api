@@ -1,0 +1,10 @@
+emu2api
+Copyright 2021-2021 The alttpj contributors
+
+This product includes software developed at
+alttpj (https://github.com/alttpj).
+
+The implementation for io.github.alttpj.emu2api.utils.ulid.ULIDImplementation
+is copied from
+https://github.com/huxi/sulky/blob/a153f835f32c9500c1f4f5f79091cc2105b695d9/sulky-ulid/src/main/java/de/huxhorn/sulky/ulid/ULID.java
+on 2021-04-21. The source code by Joern Huxhorn is dual-licensed GPLv3 and Apache v2.

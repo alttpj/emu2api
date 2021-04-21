@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>io.github.alttpj.emu2api</groupId>
+    <artifactId>emu2api</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <relativePath>../..</relativePath>
+  </parent>
+
+  <groupId>io.github.alttpj.emu2api.source</groupId>
+  <artifactId>emu2api-source-api</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+  <name>emu2api :: source :: api</name>
+
+  <dependencies>
+    <dependency>
+      <groupId>io.github.alttpj.emu2api.utils</groupId>
+      <artifactId>emu2api-utils-ulid</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>io.github.alttpj.emu2api.event</groupId>
+      <artifactId>emu2api-event-api</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>jakarta.enterprise</groupId>
+      <artifactId>jakarta.enterprise.cdi-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+
+</project>

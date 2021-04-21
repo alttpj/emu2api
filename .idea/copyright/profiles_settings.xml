@@ -1,0 +1,8 @@
+<component name="CopyrightManager">
+  <settings default="alttpj Apache2">
+    <module2copyright>
+      <element module="All" copyright="alttpj Apache2" />
+      <element module="utils/ulid/implementation" copyright="ulid apache2" />
+    </module2copyright>
+  </settings>
+</component>
