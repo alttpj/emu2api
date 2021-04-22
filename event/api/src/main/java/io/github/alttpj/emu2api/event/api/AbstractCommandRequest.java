@@ -17,36 +17,18 @@
 package io.github.alttpj.emu2api.event.api;
 
 import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
 import org.immutables.value.Value;
 
 @Value.Immutable
-abstract class AbstractCommand {
+abstract class AbstractCommandRequest {
 
+  @Value.Default
+  public RequestId getRequestId() {
+    return RequestId.create();
+  }
+
+  @Value.Parameter
   public abstract CommandType getCommandType();
 
   public abstract List<Object> getCommandParameters();
-
-  @Value.Check
-  void checkCommandValid() {
-    final CommandType commandType = this.getCommandType();
-    final List<Object> commandParameters = this.getCommandParameters();
-
-    final List<Class<?>> parameterTypes = commandType.getParameterTypes();
-    final long minParameterCount =
-        parameterTypes.stream().filter(type -> !type.isAssignableFrom(Optional.class)).count();
-
-    if (commandParameters.size() < minParameterCount) {
-      final String message =
-          String.format(
-              Locale.ENGLISH,
-              "Expected at least [%d] parameters for command [%s], but got [%d].",
-              minParameterCount,
-              commandType,
-              commandParameters.size());
-
-      throw new IllegalStateException(message);
-    }
-  }
 }

@@ -16,4 +16,84 @@
 
 package io.github.alttpj.emu2api.endpoint.ws.data;
 
-public class Usb2SnesRequest {}
+import jakarta.json.bind.annotation.JsonbCreator;
+import jakarta.json.bind.annotation.JsonbProperty;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.StringJoiner;
+
+public class Usb2SnesRequest {
+
+  private final String opcode;
+
+  private final String space;
+
+  private final List<String> flags;
+
+  private final List<String> operands;
+
+  @JsonbCreator
+  public Usb2SnesRequest(
+      final @JsonbProperty("Opcode") String opcode,
+      final @JsonbProperty("Space") String space,
+      final @JsonbProperty("Flags") List<String> flags,
+      final @JsonbProperty("Operands") List<String> operands) {
+
+    this.opcode = opcode;
+    this.space = space;
+    this.flags = Collections.unmodifiableList(flags);
+    this.operands = Collections.unmodifiableList(operands);
+  }
+
+  @JsonbProperty("Opcode")
+  public String getOpcode() {
+    return this.opcode;
+  }
+
+  @JsonbProperty("Space")
+  public String getSpace() {
+    return this.space;
+  }
+
+  @JsonbProperty("Flags")
+  public List<String> getFlags() {
+    return this.flags;
+  }
+
+  @JsonbProperty("Operands")
+  public List<String> getOperands() {
+    return this.operands;
+  }
+
+  @Override
+  public boolean equals(final Object other) {
+    if (this == other) {
+      return true;
+    }
+    if (other == null || this.getClass() != other.getClass()) {
+      return false;
+    }
+    final Usb2SnesRequest that = (Usb2SnesRequest) other;
+    return this.opcode.equals(that.opcode)
+        && this.space.equals(that.space)
+        && this.flags.equals(that.flags)
+        && this.operands.equals(that.operands);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(this.opcode, this.space, this.flags, this.operands);
+  }
+
+  @Override
+  public String toString() {
+    return new StringJoiner(", ", Usb2SnesRequest.class.getSimpleName() + "[", "]")
+        .add("super=" + super.toString())
+        .add("opcode='" + this.opcode + "'")
+        .add("space='" + this.space + "'")
+        .add("flags=" + this.flags)
+        .add("operands=" + this.operands)
+        .toString();
+  }
+}

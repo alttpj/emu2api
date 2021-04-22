@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package io.github.alttpj.emu2api.event.api;
+package io.github.alttpj.emu2api.event.api
 
-import org.immutables.value.Value;
+import spock.lang.Specification
 
-@Value.Immutable
-abstract class AbstractCommandRequestEvent {
+class CommandLiteralTest extends Specification {
 
-  @Value.Default
-  public RequestId getRequestId() {
-    return RequestId.create();
+  def 'literal can carry command type'() {
+    setup:
+    def literal = new Command.Literal(CommandType.DEVICE_LIST)
+
+    expect:
+    assert literal.type() == CommandType.DEVICE_LIST
   }
-
-  @Value.Parameter
-  public abstract Command getCommand();
 }

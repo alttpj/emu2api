@@ -16,11 +16,23 @@
 
 package io.github.alttpj.emu2api.event.api;
 
+import java.util.List;
 import java.util.Optional;
+import org.immutables.value.Value;
 
+@Value.Immutable
 abstract class AbstractCommandResponse {
+
+  public abstract RequestId getRequestId();
 
   public abstract CommandType getCommandType();
 
+  public abstract List<String> getReturnParameters();
+
   public abstract Optional<Throwable> getFailedWith();
+
+  @Value.Derived
+  public boolean isSuccessful() {
+    return this.getFailedWith().isEmpty();
+  }
 }

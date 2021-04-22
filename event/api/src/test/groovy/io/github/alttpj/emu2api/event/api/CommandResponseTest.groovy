@@ -18,23 +18,20 @@ package io.github.alttpj.emu2api.event.api
 
 import spock.lang.Specification
 
-class CommandResponseEventTest extends Specification {
+class CommandResponseTest extends Specification {
 
     def 'can be hold an exception and is not successful'() {
         setup:
-        def commandResponse = Mock(AbstractCommandResponse)
-        commandResponse.commandType >> CommandType.VERSION
-        commandResponse.failedWith >> Optional.of(new UnsupportedOperationException("not implemented"))
-
-        def responseEvent = CommandResponseEvent.builder()
-                .requestId(RequestId.create())
-                .commandResponse(commandResponse)
-                .build()
+        def responseEvent = CommandResponse.builder()
+            .requestId(RequestId.create())
+            .commandType(CommandType.DEVICE_LIST)
+            .failedWith(Optional.of(new UnsupportedOperationException("not implemented")))
+            .build()
 
         expect:
         assert !responseEvent.successful
 
-        def failedWith = responseEvent.commandResponse.failedWith.get()
+        def failedWith = responseEvent.failedWith.get()
         assert failedWith instanceof UnsupportedOperationException
         assert failedWith.message == "not implemented"
     }

@@ -18,21 +18,42 @@ package io.github.alttpj.emu2api.event.api;
 
 import static java.util.Collections.unmodifiableList;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
 import java.util.StringJoiner;
 
 public enum CommandType {
-  /** Queries RetroArch for the version. */
-  VERSION(List.of());
+  /** Queries the emulators for recognized devices. */
+  DEVICE_LIST("DeviceList", List.of());
 
+  private final String opcode;
   private final List<Class<?>> parameterTypes;
 
-  CommandType(final List<Class<?>> parameterTypes) {
+  CommandType(final String opcode, final List<Class<?>> parameterTypes) {
+    this.opcode = opcode;
     this.parameterTypes = unmodifiableList(parameterTypes);
+  }
+
+  public String getOpcode() {
+    return this.opcode;
   }
 
   public List<Class<?>> getParameterTypes() {
     return this.parameterTypes;
+  }
+
+  public static Optional<CommandType> getByOpCode(final String opcode) {
+    return Arrays.stream(values()).filter(ct -> opcodeMatchesIgnoreCase(ct, opcode)).findAny();
+  }
+
+  private static boolean opcodeMatchesIgnoreCase(
+      final CommandType commandType, final String opcode) {
+    return commandType
+        .opcode
+        .toLowerCase(Locale.ENGLISH)
+        .equals(opcode.toLowerCase(Locale.ENGLISH));
   }
 
   @Override

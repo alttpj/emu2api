@@ -16,24 +16,5 @@
 
 package io.github.alttpj.emu2api.source.api;
 
-import io.github.alttpj.emu2api.event.api.CommandRequestEvent;
-import jakarta.enterprise.event.Observes;
-import java.util.List;
-
 /** An emulator source is an implementation of a backend, like RetroArch or sd2snes. */
-public interface EmulatorSource {
-
-  /**
-   * This method is called every time a command shall be executed.
-   *
-   * @param event the command to be executed.
-   */
-  void commandRequest(@Observes CommandRequestEvent event);
-
-  /**
-   * Returns the list of Emulators which this source is connected to.
-   *
-   * @return a list of emulators this source is connected to.
-   */
-  List<Emulator> getConnectedTo();
-}
+public interface EmulatorSource {}

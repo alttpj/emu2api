@@ -18,20 +18,17 @@ package io.github.alttpj.emu2api.event.api
 
 import spock.lang.Specification
 
-class CommandRequestEventTest extends Specification {
+class CommandRequestTest extends Specification {
 
     def "assert a new RequestId is Generated for new commands"() {
         setup:
-        def command = Command.builder()
-                .commandType(CommandType.VERSION)
-                .build();
-        def commandRequest1 = CommandRequestEvent.of(command);
-        def commandRequest2 = CommandRequestEvent.of(command);
+        def commandRequest1 = CommandRequest.of(CommandType.DEVICE_LIST);
+        def commandRequest2 = CommandRequest.of(CommandType.DEVICE_LIST);
 
         expect:
         assert commandRequest1 != commandRequest2
         assert commandRequest1.requestId != commandRequest2.requestId
-        assert commandRequest1.command == commandRequest2.command
+        assert commandRequest1.commandType == commandRequest2.commandType
 
     }
 }

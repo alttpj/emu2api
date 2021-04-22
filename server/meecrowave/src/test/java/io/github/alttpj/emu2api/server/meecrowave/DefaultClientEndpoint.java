@@ -14,17 +14,23 @@
  * limitations under the License.
  */
 
-package io.github.alttpj.emu2api.endpoint.ws;
+package io.github.alttpj.emu2api.server.meecrowave;
 
-import io.github.alttpj.emu2api.endpoint.ws.data.Usb2SnesRequest;
-import io.github.alttpj.emu2api.endpoint.ws.encoder.Usb2SnesRequestEncoder;
+import static java.util.Collections.unmodifiableList;
+
+import io.github.alttpj.emu2api.endpoint.ws.json.Usb2SnesRequestEncoder;
+import jakarta.websocket.ClientEndpoint;
+import jakarta.websocket.CloseReason;
 import jakarta.websocket.OnClose;
 import jakarta.websocket.OnError;
 import jakarta.websocket.OnMessage;
 import jakarta.websocket.OnOpen;
 import jakarta.websocket.Session;
-import jakarta.websocket.server.ServerEndpoint;
 import java.io.IOException;
+import java.util.List;
+import java.util.StringJoiner;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.logging.Logger;
 
 /**
  * Implementation of the usb2snes protocol.
@@ -32,11 +38,13 @@ import java.io.IOException;
  * <p>See <a
  * href="https://github.com/Skarsnik/QUsb2snes/blob/d11c5749d6c27879552a06d7a858eb228491bd69/docs/Procotol.md">Protocol.md</a>.
  */
-@ServerEndpoint(
-    value = "/",
-    decoders = {Usb2SnesRequestEncoder.class},
-    encoders = {Usb2SnesRequestEncoder.class})
-public class DefaultEndpoint {
+@ClientEndpoint(encoders = {Usb2SnesRequestEncoder.class})
+public class DefaultClientEndpoint {
+
+  private static final Logger LOG =
+      Logger.getLogger(DefaultClientEndpoint.class.getCanonicalName());
+
+  private final List<String> messages = new CopyOnWriteArrayList<>();
 
   @OnOpen
   public void onOpen(final Session session) throws IOException {
@@ -44,17 +52,27 @@ public class DefaultEndpoint {
   }
 
   @OnMessage
-  public void onMessage(final Session session, final Usb2SnesRequest message) throws IOException {
-    // Handle new messages
+  public void onMessage(final Session session, final String message) throws IOException {
+    this.messages.add(message);
   }
 
   @OnClose
-  public void onClose(final Session session) throws IOException {
-    // WebSocket connection closes
-  }
+  public void onClose(final Session session, final CloseReason closeReason) throws IOException {}
 
   @OnError
   public void onError(final Session session, final Throwable throwable) {
-    // Do error handling here
+    throw (RuntimeException) throwable;
+  }
+
+  public List<String> getMessages() {
+    return unmodifiableList(this.messages);
+  }
+
+  @Override
+  public String toString() {
+    return new StringJoiner(", ", DefaultClientEndpoint.class.getSimpleName() + "[", "]")
+        .add("super=" + super.toString())
+        .add("messages=" + this.messages)
+        .toString();
   }
 }

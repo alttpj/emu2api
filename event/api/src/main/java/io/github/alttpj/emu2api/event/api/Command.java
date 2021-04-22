@@ -16,17 +16,26 @@
 
 package io.github.alttpj.emu2api.event.api;
 
-import org.immutables.value.Value;
+import jakarta.enterprise.util.AnnotationLiteral;
+import jakarta.inject.Qualifier;
 
-@Value.Immutable
-abstract class AbstractCommandResponseEvent {
+@Qualifier
+public @interface Command {
 
-  public abstract RequestId getRequestId();
+  CommandType type();
 
-  public abstract AbstractCommandResponse getCommandResponse();
+  class Literal extends AnnotationLiteral<Command> implements Command {
 
-  @Value.Derived
-  public boolean isSuccessful() {
-    return this.getCommandResponse().getFailedWith().isEmpty();
+    private static final long serialVersionUID = -2208336951312879820L;
+    private final CommandType type;
+
+    public Literal(final CommandType type) {
+      this.type = type;
+    }
+
+    @Override
+    public CommandType type() {
+      return this.type;
+    }
   }
 }

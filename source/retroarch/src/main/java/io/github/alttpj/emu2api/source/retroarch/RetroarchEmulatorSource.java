@@ -16,30 +16,29 @@
 
 package io.github.alttpj.emu2api.source.retroarch;
 
-import io.github.alttpj.emu2api.event.api.CommandRequestEvent;
-import io.github.alttpj.emu2api.event.api.CommandResponseEvent;
-import io.github.alttpj.emu2api.source.api.Emulator;
+import io.github.alttpj.emu2api.event.api.Command;
+import io.github.alttpj.emu2api.event.api.CommandRequest;
+import io.github.alttpj.emu2api.event.api.CommandResponse;
+import io.github.alttpj.emu2api.event.api.CommandType;
 import io.github.alttpj.emu2api.source.api.EmulatorSource;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Event;
 import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
-import java.util.List;
 
+@ApplicationScoped
 public class RetroarchEmulatorSource implements EmulatorSource {
 
-  @Inject private Event<CommandResponseEvent> commandResponseEvent;
+  @Inject private Event<CommandResponse> commandResponseEvent;
 
-  @Override
-  public void commandRequest(@Observes final CommandRequestEvent event) {
-    // TODO: implement
-    throw new UnsupportedOperationException(
-        "not yet implemented: [io.github.alttpj.emu2api.source.retroarch.RetroarchEmulatorSource::commandRequest].");
-  }
+  public void commandRequest(
+      final @Observes @Command(type = CommandType.DEVICE_LIST) CommandRequest event) {
+    final CommandResponse empty =
+        CommandResponse.builder()
+            .requestId(event.getRequestId())
+            .commandType(event.getCommandType())
+            .build();
 
-  @Override
-  public List<Emulator> getConnectedTo() {
-    // TODO: implement
-    throw new UnsupportedOperationException(
-        "not yet implemented: [io.github.alttpj.emu2api.source.retroarch.RetroarchEmulatorSource::getConnectedTo].");
+    this.commandResponseEvent.fire(empty);
   }
 }
