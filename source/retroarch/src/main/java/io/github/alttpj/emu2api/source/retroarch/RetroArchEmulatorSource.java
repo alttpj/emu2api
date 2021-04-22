@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-${year} the ALttPJ Team @ https://github.com/alttpj
+ * Copyright 2021-2021 the ALttPJ Team @ https://github.com/alttpj
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,18 +21,39 @@ import io.github.alttpj.emu2api.event.api.CommandRequest;
 import io.github.alttpj.emu2api.event.api.CommandResponse;
 import io.github.alttpj.emu2api.event.api.CommandType;
 import io.github.alttpj.emu2api.source.api.EmulatorSource;
+import io.github.alttpj.emu2api.source.api.config.Emulator;
+import io.github.alttpj.emu2api.source.api.config.EmulatorConfig;
+import io.github.alttpj.emu2api.source.api.config.GeneralConfig;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Event;
 import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @ApplicationScoped
-public class RetroarchEmulatorSource implements EmulatorSource {
+public class RetroArchEmulatorSource implements EmulatorSource {
 
-  @Inject private Event<CommandResponse> commandResponseEvent;
+  private static final Logger LOG =
+      Logger.getLogger(RetroArchEmulatorSource.class.getCanonicalName());
+
+  @Inject
+  private GeneralConfig generalConfig;
+
+  @Inject
+  @Emulator(name = "RetroArch")
+  private EmulatorConfig retroArchConfig;
+
+  @Inject
+  private Event<CommandResponse> commandResponseEvent;
 
   public void commandRequest(
       final @Observes @Command(type = CommandType.DEVICE_LIST) CommandRequest event) {
+    if (!this.retroArchConfig.isEnabled()) {
+      LOG.log(Level.FINE, "not enabled.");
+      return;
+    }
+
     final CommandResponse empty =
         CommandResponse.builder()
             .requestId(event.getRequestId())

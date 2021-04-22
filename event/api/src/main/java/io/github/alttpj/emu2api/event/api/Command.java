@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-${year} the ALttPJ Team @ https://github.com/alttpj
+ * Copyright 2021-2021 the ALttPJ Team @ https://github.com/alttpj
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,13 @@ package io.github.alttpj.emu2api.event.api;
 
 import jakarta.enterprise.util.AnnotationLiteral;
 import jakarta.inject.Qualifier;
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 @Qualifier
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
 public @interface Command {
 
   CommandType type();

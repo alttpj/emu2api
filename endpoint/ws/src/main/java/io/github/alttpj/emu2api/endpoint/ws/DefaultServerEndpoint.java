@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-${year} the ALttPJ Team @ https://github.com/alttpj
+ * Copyright 2021-2021 the ALttPJ Team @ https://github.com/alttpj
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,6 @@ import io.github.alttpj.emu2api.event.api.RequestId;
 import jakarta.enterprise.event.Event;
 import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
-import jakarta.json.bind.Jsonb;
 import jakarta.websocket.CloseReason;
 import jakarta.websocket.CloseReason.CloseCodes;
 import jakarta.websocket.EncodeException;
@@ -58,8 +57,6 @@ public class DefaultServerEndpoint {
   // TODO: make sure they are also removed after a specific amount of time.
   private static final Map<RequestId, Session> PENDING_REQUESTS = new ConcurrentHashMap<>();
 
-  @Inject private Jsonb jsonb;
-
   @Inject private Event<CommandRequest> commandEvent;
 
   @OnOpen
@@ -85,6 +82,8 @@ public class DefaultServerEndpoint {
 
   @OnError
   public void onError(final Session session, final Throwable throwable) {
+    LOG.log(Level.SEVERE, "unexpected error for session " + session, throwable);
+
     try {
       closeClientSession(session, throwable);
     } catch (final IOException javaIoIOException) {
