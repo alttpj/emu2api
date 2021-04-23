@@ -31,6 +31,7 @@
     <java.version>11</java.version>
     <maven.compiler.release>${java.version}</maven.compiler.release>
     <surefire.additional.args />
+    <fmt.maven.plugin.skip>false</fmt.maven.plugin.skip>
 
     <!-- build properties -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -165,7 +166,6 @@
       </dependency>
 
       <!-- testing -->
-      <!-- https://mvnrepository.com/artifact/org.junit/junit-bom -->
       <dependency>
         <groupId>org.junit</groupId>
         <artifactId>junit-bom</artifactId>
@@ -629,6 +629,9 @@
       <plugin>
         <groupId>com.coveo</groupId>
         <artifactId>fmt-maven-plugin</artifactId>
+        <configuration>
+          <skip>${fmt.maven.plugin.skip}</skip>
+        </configuration>
         <executions>
           <execution>
             <phase>process-sources</phase>
@@ -707,6 +710,16 @@
         </property>
       </activation>
     </profile>
+
+    <profile>
+      <id>jdk16</id>
+      <activation>
+        <jdk>[16,)</jdk>
+      </activation>
+      <properties>
+        <fmt.maven.plugin.skip>true</fmt.maven.plugin.skip>
+      </properties>
+    </profile>
   </profiles>
 
   <licenses>
@@ -730,5 +743,20 @@
       <url>https://maven.pkg.github.com/alttpj/emu2api</url>
     </snapshotRepository>
   </distributionManagement>
+
+  <repositories>
+    <repository>
+      <id>apache-snapshots</id>
+      <url>https://repository.apache.org/snapshots/</url>
+      <snapshots>
+        <updatePolicy>daily</updatePolicy>
+        <checksumPolicy>fail</checksumPolicy>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+    </repository>
+  </repositories>
 
 </project>
