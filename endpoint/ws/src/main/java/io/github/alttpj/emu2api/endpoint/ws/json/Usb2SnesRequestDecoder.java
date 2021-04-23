@@ -17,7 +17,6 @@
 package io.github.alttpj.emu2api.endpoint.ws.json;
 
 import io.github.alttpj.emu2api.endpoint.ws.data.Usb2SnesRequest;
-import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.spi.CDI;
 import jakarta.json.bind.Jsonb;
 import jakarta.websocket.DecodeException;
@@ -26,7 +25,6 @@ import jakarta.websocket.EndpointConfig;
 import java.io.IOException;
 import java.io.Reader;
 
-@ApplicationScoped
 public class Usb2SnesRequestDecoder implements Decoder.TextStream<Usb2SnesRequest> {
 
   private Jsonb jsonb;

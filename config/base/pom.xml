@@ -27,39 +27,16 @@
     <relativePath>../../pom.xml</relativePath>
   </parent>
 
-  <groupId>io.github.alttpj.emu2api.source</groupId>
-  <artifactId>emu2api-source-retroarch</artifactId>
+  <groupId>io.github.alttpj.emu2api.config</groupId>
+  <artifactId>emu2api-config-base</artifactId>
   <version>1.0.0-SNAPSHOT</version>
-  <name>emu2api :: source :: retroarch</name>
-
-  <properties>
-    <surefire.additional.args>
-      -Djava.util.logging.manager=org.apache.logging.log4j.jul.LogManager
-    </surefire.additional.args>
-  </properties>
+  <name>emu2api :: config :: base</name>
 
   <dependencies>
     <dependency>
-      <groupId>io.github.alttpj.emu2api.source</groupId>
-      <artifactId>emu2api-source-api</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>io.github.alttpj.emu2api.config</groupId>
-      <artifactId>emu2api-config-base</artifactId>
-    </dependency>
-
-    <dependency>
       <groupId>jakarta.enterprise</groupId>
       <artifactId>jakarta.enterprise.cdi-api</artifactId>
-      <scope>provided</scope>
-    </dependency>
-
-    <!-- test -->
-    <dependency>
-      <groupId>org.yaml</groupId>
-      <artifactId>snakeyaml</artifactId>
-      <scope>test</scope>
     </dependency>
   </dependencies>
+
 </project>

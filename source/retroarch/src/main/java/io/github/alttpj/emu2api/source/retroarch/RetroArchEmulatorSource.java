@@ -21,13 +21,14 @@ import io.github.alttpj.emu2api.event.api.CommandRequest;
 import io.github.alttpj.emu2api.event.api.CommandResponse;
 import io.github.alttpj.emu2api.event.api.CommandType;
 import io.github.alttpj.emu2api.source.api.EmulatorSource;
-import io.github.alttpj.emu2api.source.api.config.Emulator;
-import io.github.alttpj.emu2api.source.api.config.EmulatorConfig;
-import io.github.alttpj.emu2api.source.api.config.GeneralConfig;
+import io.github.alttpj.emu2api.source.config.base.Emulator;
+import io.github.alttpj.emu2api.source.config.base.EmulatorConfig;
+import io.github.alttpj.emu2api.source.config.base.GeneralConfig;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Event;
 import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -37,15 +38,13 @@ public class RetroArchEmulatorSource implements EmulatorSource {
   private static final Logger LOG =
       Logger.getLogger(RetroArchEmulatorSource.class.getCanonicalName());
 
-  @Inject
-  private GeneralConfig generalConfig;
+  @Inject private GeneralConfig generalConfig;
 
   @Inject
   @Emulator(name = "RetroArch")
   private EmulatorConfig retroArchConfig;
 
-  @Inject
-  private Event<CommandResponse> commandResponseEvent;
+  @Inject private Event<CommandResponse> commandResponseEvent;
 
   public void commandRequest(
       final @Observes @Command(type = CommandType.DEVICE_LIST) CommandRequest event) {
@@ -61,5 +60,13 @@ public class RetroArchEmulatorSource implements EmulatorSource {
             .build();
 
     this.commandResponseEvent.fire(empty);
+  }
+
+  public List<String> getDevices() {
+    return List.of();
+  }
+
+  public EmulatorConfig getRetroArchConfig() {
+    return this.retroArchConfig;
   }
 }

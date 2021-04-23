@@ -75,9 +75,6 @@ public class MeecrowaveServerTest {
       Awaitility.await()
           .atMost(Duration.ofSeconds(1L))
           .until(() -> clientEndpoint.getMessages().size() > 1);
-
-      // Close session
-      session.close();
     } finally {
       LifeCycle.stop(container);
     }

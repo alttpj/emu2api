@@ -10,6 +10,10 @@ In more detail, this tool will connect to RetroArch and expose two command inter
 * One websocket interface (same API like qusb2snes) and
 * An Apache Thrift interface (a binary protocol)
 
+== Compilation
+
+See link:COMPILING.adoc[COMPILING.adoc].
+
 == License
 
 link:LICENSE[Apache License v2].

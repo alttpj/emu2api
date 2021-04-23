@@ -1,0 +1,15 @@
+emulators:
+
+  RetroArch:
+    enabled: true
+
+    instances:
+      - name: myname
+        host: localhost
+        port: 55355
+        protocol: udp
+      - name: multiworldbuddy
+        host: other.host.name.invalid
+        port: 554455
+        protocol: quic
+

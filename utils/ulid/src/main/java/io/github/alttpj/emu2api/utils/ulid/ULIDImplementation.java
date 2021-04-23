@@ -25,7 +25,7 @@ import java.util.Random;
 /*
  * https://github.com/ulid/spec
  */
-@SuppressWarnings("PMD.ShortClassName")
+@SuppressWarnings("ALL")
 class ULIDImplementation {
 
   private static final char[] ENCODING_CHARS = {

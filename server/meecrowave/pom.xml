@@ -33,15 +33,18 @@
   <name>emu2api :: server :: meecrowave</name>
 
   <properties>
-    <meecrowave.version>1.2.11-SNAPSHOT</meecrowave.version>
+    <surefire.additional.args>
+      -Djava.util.logging.manager=org.apache.logging.log4j.jul.LogManager
+    </surefire.additional.args>
   </properties>
 
   <dependencies>
     <dependency>
       <groupId>org.apache.meecrowave</groupId>
       <artifactId>meecrowave-core</artifactId>
-      <version>${meecrowave.version}</version>
+      <version>${dependency.meecrowave.version}</version>
       <classifier>jakarta</classifier>
+      <scope>compile</scope>
       <exclusions>
         <exclusion>
           <groupId>*</groupId>
@@ -51,9 +54,16 @@
     </dependency>
     <!-- add websocket support -->
     <dependency>
-      <groupId>org.apache.tomcat</groupId>
-      <artifactId>tomcat-websocket</artifactId>
-      <version>10.0.5</version>
+      <groupId>jakarta.websocket</groupId>
+      <artifactId>jakarta.websocket-api</artifactId>
+      <version>2.0.0</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.meecrowave</groupId>
+      <artifactId>meecrowave-websocket</artifactId>
+      <version>${dependency.meecrowave.version}</version>
+      <classifier>jakarta</classifier>
       <scope>runtime</scope>
     </dependency>
 
@@ -71,7 +81,6 @@
       <version>2.14.1</version>
     </dependency>
 
-
     <!-- deployed projects -->
     <dependency>
       <groupId>io.github.alttpj.emu2api.endpoint</groupId>
@@ -84,26 +93,8 @@
     </dependency>
 
     <!-- config -->
-    <dependency>
-      <groupId>io.github.alttpj.emu2api.source</groupId>
-      <artifactId>emu2api-source-config-toml</artifactId>
-      <scope>runtime</scope>
-    </dependency>
+    <!-- managed by profile -->
 
-    <!-- our test dependencies -->
-    <dependency>
-      <groupId>org.apache.meecrowave</groupId>
-      <artifactId>meecrowave-junit</artifactId>
-      <version>${meecrowave.version}</version>
-      <scope>test</scope>
-      <classifier>jakarta</classifier>
-      <exclusions>
-        <exclusion>
-          <groupId>org.apache.meecrowave</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
     <!-- websocket client for testing -->
     <dependency>
       <groupId>org.eclipse.jetty.websocket</groupId>
@@ -118,9 +109,57 @@
       <version>4.0.3</version>
       <scope>test</scope>
     </dependency>
-
-
   </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>check-coverage</id>
+            <phase>none</phase>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+    <profile>
+      <id>config-toml</id>
+      <activation>
+        <property>
+          <name>config.toml</name>
+        </property>
+      </activation>
+      <dependencies>
+        <dependency>
+          <groupId>io.github.alttpj.emu2api.config</groupId>
+          <artifactId>emu2api-config-toml</artifactId>
+          <scope>runtime</scope>
+        </dependency>
+      </dependencies>
+    </profile>
+
+    <profile>
+      <id>config-yaml</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+        <property>
+          <name>!config.toml</name>
+        </property>
+      </activation>
+      <dependencies>
+        <dependency>
+          <groupId>io.github.alttpj.emu2api.config</groupId>
+          <artifactId>emu2api-config-yaml</artifactId>
+          <scope>runtime</scope>
+        </dependency>
+      </dependencies>
+    </profile>
+  </profiles>
 
   <repositories>
     <repository>

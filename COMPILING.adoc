@@ -1,0 +1,31 @@
+= Compiling emu2api
+
+== Prerequisites
+
+* Java JDK 11 or higher. +
+Best tested with OpenJDK-OpenJ9 builds from link:https://adoptium.net/[Eclipse Adoptium]. +
+If you do not want to install another Java, you can just use the zip/tgz distribution, extract it somewhere and set `JAVA_HOME` in your current shell.
+* Optional: Maven. +
+You can also use the included maven wrapper script `./mvnw`.
+
+== Compilation
+
+To compile, enter:
+
+[source,bash]
+----
+./mvnw clean verify
+----
+
+This will run all standard tests, but skip long-runnin integration tests and generation of the documentation.
+
+It will produce a jar artifact in `server/meecrowave/target/`.
+
+== Compilation profiles
+
+=== TOML / YAML
+
+The default configuration will use YAML files.
+You can switch to using TOML by using the System Property `-Dconfig.toml`.
+
+*Note* that profile activation will not work here unless you explicitly deactivate the yaml profile: `'-Pconfig-toml,!config-yaml'`.

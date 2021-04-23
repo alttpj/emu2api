@@ -86,8 +86,8 @@ public class DefaultServerEndpoint {
 
     try {
       closeClientSession(session, throwable);
-    } catch (final IOException javaIoIOException) {
-      LOG.log(Level.WARNING, "unable to close the session " + session, javaIoIOException);
+    } catch (final IOException javaIoException) {
+      LOG.log(Level.WARNING, "unable to close the session " + session, javaIoException);
     }
   }
 
