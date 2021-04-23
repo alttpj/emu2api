@@ -1,0 +1,19 @@
+[emulators]
+
+[emulators.RetroArch]
+enabled = true
+
+[emulators.RetroArch.network]
+protocol = "udp"
+
+[[emulators.RetroArch.instances]]
+name = "myname"
+host = "localhost"
+port = "55355"
+transport = "udp"
+
+[[emulators.RetroArch.instances]]
+name = "multiworldbuddy"
+host = "other.host.name.invalid"
+port = "554455"
+transport = "quic"

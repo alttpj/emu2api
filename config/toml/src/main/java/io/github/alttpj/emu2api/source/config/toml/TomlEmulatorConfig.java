@@ -16,28 +16,25 @@
 
 package io.github.alttpj.emu2api.source.config.toml;
 
+import static java.util.Collections.emptyMap;
+
+import com.fasterxml.jackson.dataformat.toml.TomlMapper;
 import io.github.alttpj.emu2api.source.config.base.AbstractModifiedConfigFileReader;
 import io.github.alttpj.emu2api.source.config.base.EmulatorConfig;
+import io.github.alttpj.emu2api.source.config.base.GeneralConfig;
 import io.github.alttpj.emu2api.source.config.base.SimpleEmulatorConfig;
 import io.github.alttpj.emu2api.source.config.base.SimpleGeneralConfig;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.tomlj.Toml;
-import org.tomlj.TomlParseResult;
 
-public class TomlEmulatorConfig extends AbstractModifiedConfigFileReader<TomlParseResult> {
+public class TomlEmulatorConfig extends AbstractModifiedConfigFileReader {
 
   private static final Logger LOG = Logger.getLogger(TomlEmulatorConfig.class.getCanonicalName());
-
-  private SimpleGeneralConfig generalConfig;
-
-  private final Map<String, EmulatorConfig> emulatorConfigMap = new ConcurrentHashMap<>(5);
 
   public TomlEmulatorConfig() {
     this(null);
@@ -53,63 +50,43 @@ public class TomlEmulatorConfig extends AbstractModifiedConfigFileReader<TomlPar
   }
 
   @Override
-  protected TomlParseResult doReadConfigFile(final Path configSource) throws IOException {
-    final TomlParseResult result = Toml.parse(configSource);
-    result.errors().forEach(error -> LOG.log(Level.WARNING, error.toString()));
+  protected Map<String, Object> doReadConfigFile(final Path configSource) throws IOException {
+    final TomlMapper toml = TomlMapper.builder().build();
 
-    return result;
+    try (final var fis = Files.newInputStream(configSource)) {
+      final Map<String, Object> jsonNode = toml.readValue(fis, Map.class);
+      return jsonNode;
+    }
+
   }
 
   @Override
-  protected TomlParseResult emptyConfigFile() {
-    return Toml.parse("");
+  protected Map<String, Object> emptyConfigFile() {
+    return emptyMap();
   }
 
-  public SimpleGeneralConfig getGeneralConfig() {
-    this.ensureGeneralConfig();
+  @Override
+  protected GeneralConfig doReadGeneralConfig() {
+    final Map<String, Object> general = this.readConfigFile("general");
+    final Map<String, Object> generalConfig =
+        (Map<String, Object>) general.getOrDefault("general", Map.of());
 
-    return this.generalConfig;
+    return new SimpleGeneralConfig(
+        (boolean) generalConfig.getOrDefault("isDebug", false),
+        Optional.ofNullable((String) generalConfig.get("logfile"))
+            .map(Paths::get)
+            .orElse(null));
   }
 
-  protected void ensureGeneralConfig() {
-    if (this.generalConfig != null && !this.needsUpdate()) {
-      return;
-    }
+  @Override
+  protected EmulatorConfig doReadEmulatorConfig(final String emulatorSourceSectionName) {
+    final Map<String, Object> general = this.readConfigFile(emulatorSourceSectionName);
+    final Map<String, Object> emulatorConfig =
+        (Map<String, Object>) general.getOrDefault("emulators", Map.of());
+    final Map<String, Object> emuConfig =
+        (Map<String, Object>) emulatorConfig.getOrDefault(emulatorSourceSectionName, Map.of());
 
-    final TomlParseResult result = this.readConfigFile("general");
-
-    this.generalConfig =
-        new SimpleGeneralConfig(
-            result.getBoolean("isDebug", () -> Boolean.FALSE),
-            Optional.ofNullable(result.getString("logfile")).map(Paths::get).orElse(null));
-  }
-
-  public EmulatorConfig getEmulatorConfig(final String emulatorSourceSectionName) {
-    if (emulatorSourceSectionName == null || emulatorSourceSectionName.isBlank()) {
-      return new SimpleEmulatorConfig(false, Map.of());
-    }
-
-    this.ensureEmulatorConfigMap(emulatorSourceSectionName);
-
-    return this.emulatorConfigMap.get(emulatorSourceSectionName);
-  }
-
-  private void ensureEmulatorConfigMap(final String emulatorSourceSectionName) {
-    if (this.emulatorConfigMap.get(emulatorSourceSectionName) != null && !this.needsUpdate()) {
-      return;
-    }
-
-    final TomlParseResult tomlParseResult = this.readConfigFile(emulatorSourceSectionName);
-
-    final String tomlSectionName = "emulators." + emulatorSourceSectionName;
-    final Map<String, Object> configMap =
-        (Map<String, Object>) tomlParseResult.get(tomlSectionName);
-
-    final boolean enabled =
-        tomlParseResult.getBoolean(tomlSectionName + ".enabled", () -> Boolean.TRUE);
-    final EmulatorConfig simpleEmulatorConfig =
-        new SimpleEmulatorConfig(enabled, Optional.ofNullable(configMap).orElseGet(Map::of));
-
-    this.emulatorConfigMap.put(emulatorSourceSectionName, simpleEmulatorConfig);
+    final boolean enabled = (boolean) emuConfig.getOrDefault("enabled", true);
+    return new SimpleEmulatorConfig(enabled, emuConfig);
   }
 }

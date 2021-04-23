@@ -21,10 +21,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public abstract class AbstractModifiedConfigFileReader<T> {
+public abstract class AbstractModifiedConfigFileReader {
 
   private static final Logger LOG =
       Logger.getLogger(AbstractModifiedConfigFileReader.class.getCanonicalName());
@@ -32,6 +34,9 @@ public abstract class AbstractModifiedConfigFileReader<T> {
   private Instant lastReadTime = Instant.EPOCH;
 
   private final Path tomlConfigFileLocation;
+  private GeneralConfig generalConfig;
+  private final Map<String, EmulatorConfig> emulatorConfigMap = new ConcurrentHashMap<>(5);
+
 
   public AbstractModifiedConfigFileReader() {
     this(null);
@@ -77,9 +82,9 @@ public abstract class AbstractModifiedConfigFileReader<T> {
    *
    * @param reason the reason why we read the file. Just pass in "general" or the emulator name
    *     which was requested.
-   * @return an instance of T which is the config file format.
+   * @return an Map which contains the configuration.
    */
-  protected T readConfigFile(final String reason) {
+  protected Map<String, Object> readConfigFile(final String reason) {
     LOG.log(
         Level.FINE,
         "reading file "
@@ -93,7 +98,7 @@ public abstract class AbstractModifiedConfigFileReader<T> {
     }
 
     try {
-      final T readConfigFile = this.doReadConfigFile(this.getConfigFilePath());
+      final Map<String, Object> readConfigFile = this.doReadConfigFile(this.getConfigFilePath());
       this.lastReadTime = Instant.now();
       return readConfigFile;
     } catch (final IOException ioException) {
@@ -103,7 +108,45 @@ public abstract class AbstractModifiedConfigFileReader<T> {
     return this.emptyConfigFile();
   }
 
-  protected abstract T doReadConfigFile(Path configFilePath) throws IOException;
+  protected abstract Map<String, Object> doReadConfigFile(Path configFilePath) throws IOException;
 
-  protected abstract T emptyConfigFile();
+  protected Map<String, Object> emptyConfigFile() {
+    return Map.of();
+  }
+
+  public GeneralConfig getGeneralConfig() {
+    this.ensureGeneralConfig();
+
+    return this.generalConfig;
+  }
+
+  protected void ensureGeneralConfig() {
+    if (this.generalConfig != null && !this.needsUpdate()) {
+      return;
+    }
+
+    this.generalConfig = this.doReadGeneralConfig();
+  }
+
+  protected abstract GeneralConfig doReadGeneralConfig();
+
+  public EmulatorConfig getEmulatorConfig(final String emulatorSourceSectionName) {
+    if (emulatorSourceSectionName == null || emulatorSourceSectionName.isBlank()) {
+      return new SimpleEmulatorConfig(false, Map.of());
+    }
+
+    this.ensureEmulatorConfigMap(emulatorSourceSectionName);
+
+    return this.emulatorConfigMap.get(emulatorSourceSectionName);
+  }
+
+  private void ensureEmulatorConfigMap(final String emulatorSectionName) {
+    if (this.emulatorConfigMap.get(emulatorSectionName) != null && !this.needsUpdate()) {
+      return;
+    }
+
+    this.emulatorConfigMap.put(emulatorSectionName, this.doReadEmulatorConfig(emulatorSectionName));
+  }
+
+  protected abstract EmulatorConfig doReadEmulatorConfig(String emulatorSectionName);
 }

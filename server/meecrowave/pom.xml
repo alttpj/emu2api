@@ -130,8 +130,9 @@
     <profile>
       <id>config-toml</id>
       <activation>
+        <activeByDefault>true</activeByDefault>
         <property>
-          <name>config.toml</name>
+          <name>!config.yaml</name>
         </property>
       </activation>
       <dependencies>
@@ -146,9 +147,8 @@
     <profile>
       <id>config-yaml</id>
       <activation>
-        <activeByDefault>true</activeByDefault>
         <property>
-          <name>!config.toml</name>
+          <name>config.yaml</name>
         </property>
       </activation>
       <dependencies>

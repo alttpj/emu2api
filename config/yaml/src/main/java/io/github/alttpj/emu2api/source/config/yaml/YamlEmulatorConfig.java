@@ -18,6 +18,7 @@ package io.github.alttpj.emu2api.source.config.yaml;
 
 import io.github.alttpj.emu2api.source.config.base.AbstractModifiedConfigFileReader;
 import io.github.alttpj.emu2api.source.config.base.EmulatorConfig;
+import io.github.alttpj.emu2api.source.config.base.GeneralConfig;
 import io.github.alttpj.emu2api.source.config.base.SimpleEmulatorConfig;
 import io.github.alttpj.emu2api.source.config.base.SimpleGeneralConfig;
 import java.io.IOException;
@@ -30,7 +31,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 import org.yaml.snakeyaml.Yaml;
 
-public class YamlEmulatorConfig extends AbstractModifiedConfigFileReader<Map<String, Object>> {
+public class YamlEmulatorConfig extends AbstractModifiedConfigFileReader {
 
   private static final Logger LOG = Logger.getLogger(YamlEmulatorConfig.class.getCanonicalName());
 
@@ -65,53 +66,35 @@ public class YamlEmulatorConfig extends AbstractModifiedConfigFileReader<Map<Str
     return Map.of();
   }
 
+  @Override
   public SimpleGeneralConfig getGeneralConfig() {
     this.ensureGeneralConfig();
 
     return this.generalConfig;
   }
 
-  protected void ensureGeneralConfig() {
-    if (this.generalConfig != null && !this.needsUpdate()) {
-      return;
-    }
-
+  @Override
+  protected GeneralConfig doReadGeneralConfig() {
     final Map<String, Object> general = this.readConfigFile("general");
     final Map<String, Object> generalConfig =
         (Map<String, Object>) general.getOrDefault("general", Map.of());
 
-    this.generalConfig =
-        new SimpleGeneralConfig(
-            (boolean) generalConfig.getOrDefault("isDebug", false),
-            Optional.ofNullable((String) generalConfig.get("logfile"))
-                .map(Paths::get)
-                .orElse(null));
+    return new SimpleGeneralConfig(
+        (boolean) generalConfig.getOrDefault("isDebug", false),
+        Optional.ofNullable((String) generalConfig.get("logfile"))
+            .map(Paths::get)
+            .orElse(null));
   }
 
-  public EmulatorConfig getEmulatorConfig(final String emulatorSourceSectionName) {
-    if (emulatorSourceSectionName == null || emulatorSourceSectionName.isBlank()) {
-      return new SimpleEmulatorConfig(false, Map.of());
-    }
-
-    this.ensureEmulatorConfigMap(emulatorSourceSectionName);
-
-    return this.emulatorConfigMap.get(emulatorSourceSectionName);
-  }
-
-  private void ensureEmulatorConfigMap(final String emulatorSourceSectionName) {
-    if (this.emulatorConfigMap.get(emulatorSourceSectionName) != null && !this.needsUpdate()) {
-      return;
-    }
-
-    final Map<String, Object> general = this.readConfigFile("general");
+  @Override
+  protected EmulatorConfig doReadEmulatorConfig(final String emulatorSectionName) {
+    final Map<String, Object> general = this.readConfigFile(emulatorSectionName);
     final Map<String, Object> emulatorConfig =
         (Map<String, Object>) general.getOrDefault("emulators", Map.of());
     final Map<String, Object> emuConfig =
-        (Map<String, Object>) emulatorConfig.getOrDefault(emulatorSourceSectionName, Map.of());
+        (Map<String, Object>) emulatorConfig.getOrDefault(emulatorSectionName, Map.of());
 
     final boolean enabled = (boolean) emuConfig.getOrDefault("enabled", true);
-    final EmulatorConfig simpleEmulatorConfig = new SimpleEmulatorConfig(enabled, emuConfig);
-
-    this.emulatorConfigMap.put(emulatorSourceSectionName, simpleEmulatorConfig);
+    return new SimpleEmulatorConfig(enabled, emuConfig);
   }
 }

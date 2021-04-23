@@ -133,9 +133,11 @@
 
       <!-- 3rd party deps -->
       <dependency>
-        <groupId>org.tomlj</groupId>
-        <artifactId>tomlj</artifactId>
-        <version>1.0.0</version>
+        <groupId>com.fasterxml.jackson</groupId>
+        <artifactId>jackson-bom</artifactId>
+        <version>2.12.3</version>
+        <type>pom</type>
+        <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>org.yaml</groupId>
@@ -443,8 +445,10 @@
         <executions>
           <execution>
             <goals>
-              <goal>compile</goal>
+              <goal>addTestSources</goal>
+              <goal>generateTestStubs</goal>
               <goal>compileTests</goal>
+              <goal>removeTestStubs</goal>
             </goals>
           </execution>
         </executions>
@@ -455,6 +459,9 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <argLine>@{argLine} ${surefire.additional.args}</argLine>
+          <excludes>
+            <exclude>**/*IT.*</exclude>
+          </excludes>
         </configuration>
       </plugin>
 
@@ -692,21 +699,18 @@
     <profile>
       <id>config-toml</id>
       <activation>
+        <activeByDefault>true</activeByDefault>
         <property>
-          <name>config.toml</name>
+          <name>!config.yaml</name>
         </property>
       </activation>
-      <properties>
-        <config.toml>true</config.toml>
-      </properties>
     </profile>
 
     <profile>
       <id>config-yaml</id>
       <activation>
-        <activeByDefault>true</activeByDefault>
         <property>
-          <name>!config.toml</name>
+          <name>config.yaml</name>
         </property>
       </activation>
     </profile>

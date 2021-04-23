@@ -44,8 +44,8 @@
     </dependency>
 
     <dependency>
-      <groupId>org.tomlj</groupId>
-      <artifactId>tomlj</artifactId>
+      <groupId>com.fasterxml.jackson.dataformat</groupId>
+      <artifactId>jackson-dataformat-toml</artifactId>
     </dependency>
   </dependencies>
 

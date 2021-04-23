@@ -29,7 +29,7 @@ import jakarta.inject.Inject;
 import java.nio.file.Paths;
 
 @ApplicationScoped
-public class ConfigProducer {
+public class TomlConfigProducer {
 
   @Inject
   @PropertyKey(name = "emu2snes.configfile")
@@ -64,5 +64,13 @@ public class ConfigProducer {
   @Produces
   public GeneralConfig produceGeneralConfig(final TomlEmulatorConfig tomlEmulatorConfig) {
     return tomlEmulatorConfig.getGeneralConfig();
+  }
+
+  protected SystemProperty getConfigFileLocation() {
+    return this.configFileLocation;
+  }
+
+  protected void setConfigFileLocation(final SystemProperty configFileLocation) {
+    this.configFileLocation = configFileLocation;
   }
 }
