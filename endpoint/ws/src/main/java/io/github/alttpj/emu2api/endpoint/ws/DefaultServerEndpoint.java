@@ -23,8 +23,10 @@ import io.github.alttpj.emu2api.event.api.CommandRequest;
 import io.github.alttpj.emu2api.event.api.CommandResponse;
 import io.github.alttpj.emu2api.event.api.CommandType;
 import io.github.alttpj.emu2api.event.api.RequestId;
+import jakarta.enterprise.context.Dependent;
 import jakarta.enterprise.event.Event;
 import jakarta.enterprise.event.Observes;
+import jakarta.enterprise.inject.Default;
 import jakarta.inject.Inject;
 import jakarta.websocket.CloseReason;
 import jakarta.websocket.CloseReason.CloseCodes;
@@ -49,6 +51,8 @@ import java.util.logging.Logger;
  * <p>See <a
  * href="https://github.com/Skarsnik/QUsb2snes/blob/d11c5749d6c27879552a06d7a858eb228491bd69/docs/Procotol.md">Protocol.md</a>.
  */
+@Dependent
+@Default
 public class DefaultServerEndpoint {
 
   private static final Logger LOG =
