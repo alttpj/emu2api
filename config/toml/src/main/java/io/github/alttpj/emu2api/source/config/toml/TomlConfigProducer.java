@@ -19,27 +19,24 @@ package io.github.alttpj.emu2api.source.config.toml;
 import io.github.alttpj.emu2api.source.config.base.Emulator;
 import io.github.alttpj.emu2api.source.config.base.EmulatorConfig;
 import io.github.alttpj.emu2api.source.config.base.GeneralConfig;
-import io.github.alttpj.emu2api.source.config.base.PropertyKey;
-import io.github.alttpj.emu2api.source.config.base.SystemProperty;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
 import jakarta.enterprise.inject.spi.Annotated;
 import jakarta.enterprise.inject.spi.InjectionPoint;
-import jakarta.inject.Inject;
 import java.nio.file.Paths;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 @ApplicationScoped
 public class TomlConfigProducer {
 
-  @Inject
-  @PropertyKey(name = "emu2snes.configfile")
-  private SystemProperty configFileLocation;
+  @ConfigProperty(name = "emu2snes.configfile")
+  private String configFileLocation;
 
   @Produces
   @ApplicationScoped
   public TomlEmulatorConfig produceTomlEmulatorConfig() {
-    if (this.configFileLocation.getValue() != null) {
-      return new TomlEmulatorConfig(Paths.get(this.configFileLocation.getValue()));
+    if (this.configFileLocation != null) {
+      return new TomlEmulatorConfig(Paths.get(this.configFileLocation));
     }
 
     return new TomlEmulatorConfig();
@@ -66,11 +63,11 @@ public class TomlConfigProducer {
     return tomlEmulatorConfig.getGeneralConfig();
   }
 
-  protected SystemProperty getConfigFileLocation() {
+  protected String getConfigFileLocation() {
     return this.configFileLocation;
   }
 
-  protected void setConfigFileLocation(final SystemProperty configFileLocation) {
+  protected void setConfigFileLocation(final String configFileLocation) {
     this.configFileLocation = configFileLocation;
   }
 }

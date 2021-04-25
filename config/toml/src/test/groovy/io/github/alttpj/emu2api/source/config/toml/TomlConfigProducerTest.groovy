@@ -17,7 +17,6 @@
 package io.github.alttpj.emu2api.source.config.toml
 
 
-import io.github.alttpj.emu2api.source.config.base.SystemProperty
 import org.junit.jupiter.api.Test
 
 class TomlConfigProducerTest {
@@ -26,7 +25,7 @@ class TomlConfigProducerTest {
   void 'Producer produces config'() {
     setup:
     def prod = new TomlConfigProducer()
-    prod.setConfigFileLocation(new SystemProperty("", null))
+    prod.configFileLocation = null
 
     when:
     def config = prod.produceTomlEmulatorConfig()
