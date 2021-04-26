@@ -81,9 +81,7 @@ public class YamlEmulatorConfig extends AbstractModifiedConfigFileReader {
 
     return new SimpleGeneralConfig(
         (boolean) generalConfig.getOrDefault("isDebug", false),
-        Optional.ofNullable((String) generalConfig.get("logfile"))
-            .map(Paths::get)
-            .orElse(null));
+        Optional.ofNullable((String) generalConfig.get("logfile")).map(Paths::get).orElse(null));
   }
 
   @Override

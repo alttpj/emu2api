@@ -17,6 +17,7 @@
 package io.github.alttpj.emu2api.event.api;
 
 import static java.util.Collections.unmodifiableList;
+import static java.util.Objects.requireNonNull;
 
 import java.util.Arrays;
 import java.util.List;
@@ -50,6 +51,7 @@ public enum CommandType {
 
   private static boolean opcodeMatchesIgnoreCase(
       final CommandType commandType, final String opcode) {
+    requireNonNull(opcode, "opcode");
     return commandType
         .opcode
         .toLowerCase(Locale.ENGLISH)

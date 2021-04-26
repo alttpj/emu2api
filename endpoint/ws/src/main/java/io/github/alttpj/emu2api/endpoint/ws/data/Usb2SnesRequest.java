@@ -16,7 +16,6 @@
 
 package io.github.alttpj.emu2api.endpoint.ws.data;
 
-import jakarta.json.bind.annotation.JsonbCreator;
 import jakarta.json.bind.annotation.JsonbProperty;
 import java.util.Collections;
 import java.util.List;
@@ -25,15 +24,22 @@ import java.util.StringJoiner;
 
 public class Usb2SnesRequest {
 
-  private final String opcode;
+  @JsonbProperty("Opcode")
+  private String opcode;
 
-  private final String space;
+  @JsonbProperty("Space")
+  private String space;
 
-  private final List<String> flags;
+  @JsonbProperty("Flags")
+  private List<String> flags = List.of();
 
-  private final List<String> operands;
+  @JsonbProperty("Operands")
+  private List<String> operands = List.of();
 
-  @JsonbCreator
+  public Usb2SnesRequest() {
+    // default constructor
+  }
+
   public Usb2SnesRequest(
       final @JsonbProperty("Opcode") String opcode,
       final @JsonbProperty("Space") String space,
@@ -44,6 +50,15 @@ public class Usb2SnesRequest {
     this.space = space;
     this.flags = Collections.unmodifiableList(flags);
     this.operands = Collections.unmodifiableList(operands);
+  }
+
+  public Usb2SnesRequest(
+      final @JsonbProperty("Opcode") String opcode, final @JsonbProperty("Space") String space) {
+
+    this.opcode = opcode;
+    this.space = space;
+    this.flags = List.of();
+    this.operands = List.of();
   }
 
   @JsonbProperty("Opcode")

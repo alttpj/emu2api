@@ -37,7 +37,6 @@ import jakarta.websocket.OnMessage;
 import jakarta.websocket.OnOpen;
 import jakarta.websocket.Session;
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -109,7 +108,7 @@ public class DefaultServerEndpoint {
     }
 
     try {
-      final Usb2SnesResult usb2SnesResult = new Usb2SnesResult(List.of());
+      final Usb2SnesResult usb2SnesResult = new Usb2SnesResult(response.getReturnParameters());
       session.getBasicRemote().sendObject(usb2SnesResult);
     } catch (final EncodeException jakartaWebsocketEncodeException) {
       LOG.log(Level.SEVERE, "Unexpected encoding exception", jakartaWebsocketEncodeException);

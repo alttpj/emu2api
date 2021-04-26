@@ -37,7 +37,6 @@ public abstract class AbstractModifiedConfigFileReader {
   private GeneralConfig generalConfig;
   private final Map<String, EmulatorConfig> emulatorConfigMap = new ConcurrentHashMap<>(5);
 
-
   public AbstractModifiedConfigFileReader() {
     this(null);
   }

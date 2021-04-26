@@ -57,7 +57,6 @@ public class TomlEmulatorConfig extends AbstractModifiedConfigFileReader {
       final Map<String, Object> jsonNode = toml.readValue(fis, Map.class);
       return jsonNode;
     }
-
   }
 
   @Override
@@ -73,9 +72,7 @@ public class TomlEmulatorConfig extends AbstractModifiedConfigFileReader {
 
     return new SimpleGeneralConfig(
         (boolean) generalConfig.getOrDefault("isDebug", false),
-        Optional.ofNullable((String) generalConfig.get("logfile"))
-            .map(Paths::get)
-            .orElse(null));
+        Optional.ofNullable((String) generalConfig.get("logfile")).map(Paths::get).orElse(null));
   }
 
   @Override

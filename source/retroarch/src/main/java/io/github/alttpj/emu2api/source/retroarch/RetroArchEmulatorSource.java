@@ -28,15 +28,23 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Event;
 import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class RetroArchEmulatorSource implements EmulatorSource {
 
   private static final Logger LOG =
       Logger.getLogger(RetroArchEmulatorSource.class.getCanonicalName());
+
+  private static final Set<RetroArchConnection> CONNECTIONS = new HashSet<>();
+
+  @Inject private RetroArchDeviceFactory deviceFactory;
 
   @Inject private GeneralConfig generalConfig;
 
@@ -53,17 +61,62 @@ public class RetroArchEmulatorSource implements EmulatorSource {
       return;
     }
 
+    this.updateDevicesList();
+
+    final Set<String> onlineDevices =
+        CONNECTIONS.stream()
+            .filter(RetroArchConnection::canConnect)
+            .map(rac -> rac.getDevice().getName())
+            .collect(Collectors.toSet());
+
     final CommandResponse empty =
         CommandResponse.builder()
             .requestId(event.getRequestId())
             .commandType(event.getCommandType())
+            .addAllReturnParameters(onlineDevices)
             .build();
 
     this.commandResponseEvent.fire(empty);
   }
 
-  public List<String> getDevices() {
-    return List.of();
+  public Set<RetroArchDevice> updateDevicesList() {
+    if (!this.retroArchConfig.isEnabled()) {
+      return Set.of();
+    }
+
+    final Set<RetroArchDevice> devices = this.buildWantedDevices();
+
+    this.addAndRemoveDevices(devices);
+
+    return devices;
+  }
+
+  private Set<RetroArchDevice> buildWantedDevices() {
+    final List<Map<String, Object>> instances =
+        (List<Map<String, Object>>)
+            this.retroArchConfig
+                .getConfigurationMap()
+                .getOrDefault(
+                    "instances", List.of(this.deviceFactory.getDefaultConfigurationMap()));
+
+    final Set<RetroArchDevice> devices =
+        instances.stream().map(this.deviceFactory::build).collect(Collectors.toSet());
+    return devices;
+  }
+
+  private void addAndRemoveDevices(final Set<RetroArchDevice> devices) {
+    final Set<RetroArchConnection> connectionSet =
+        devices.stream().map(RetroArchConnection::new).collect(Collectors.toSet());
+
+    CONNECTIONS.addAll(connectionSet);
+    for (final RetroArchConnection connection : CONNECTIONS) {
+      if (connectionSet.contains(connection)) {
+        continue;
+      }
+
+      connection.close();
+    }
+    CONNECTIONS.retainAll(connectionSet);
   }
 
   public EmulatorConfig getRetroArchConfig() {
