@@ -32,12 +32,6 @@
   <version>1.0.0-SNAPSHOT</version>
   <name>emu2api :: source :: retroarch</name>
 
-  <properties>
-    <surefire.additional.args>
-      -Djava.util.logging.manager=org.apache.logging.log4j.jul.LogManager
-    </surefire.additional.args>
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>io.github.alttpj.emu2api.source</groupId>

@@ -14,18 +14,24 @@
  * limitations under the License.
  */
 
-package io.github.alttpj.emu2api.source.api;
+package io.github.alttpj.emu2api.event.api;
 
-import io.github.alttpj.emu2api.source.api.internal.Wrapper;
-import io.github.alttpj.emu2api.utils.ulid.ULID;
-import org.immutables.value.Value;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@Wrapper
-@Value.Immutable(builder = false)
-public abstract class AbstractEmulatorId implements Wrapped<ULID> {
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
-  private static final long serialVersionUID = 4734011114500574393L;
+public class RequestIdTest {
 
-  @Override
-  public abstract ULID getValue();
+  @Test
+  @DisplayName("creating an ULID from a string")
+  public void createUlidFromString() {
+    // setup:
+    //noinspection SpellCheckingInspection
+    final var testId = "01F3SS2890B1DWS9P591XZVEG6";
+    final var requestId = RequestId.fromString(testId);
+
+    // expect:
+    assertEquals(testId, requestId.getValue().toString());
+  }
 }

@@ -18,11 +18,9 @@ package io.github.alttpj.emu2api.event.api;
 
 import io.github.alttpj.emu2api.event.api.internal.Wrapper;
 import java.io.Serializable;
-import org.immutables.value.Value;
 
 @Wrapper
 interface Wrapped<T> extends Serializable {
 
-  @Value.Parameter
   T getValue();
 }

@@ -16,7 +16,7 @@
 
 package io.github.alttpj.emu2api.source.api;
 
-import io.github.alttpj.emu2api.event.api.internal.Wrapper;
+import io.github.alttpj.emu2api.source.api.internal.Wrapper;
 import java.io.Serializable;
 import org.immutables.value.Value;
 

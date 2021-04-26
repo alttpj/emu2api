@@ -67,7 +67,6 @@
       <scope>runtime</scope>
     </dependency>
 
-
     <!-- needed for meecrowave cli -->
     <dependency>
       <groupId>commons-cli</groupId>

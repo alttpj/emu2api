@@ -16,19 +16,24 @@
 
 package io.github.alttpj.emu2api.event.api;
 
+import io.github.alttpj.emu2api.event.api.internal.Wrapper;
 import io.github.alttpj.emu2api.utils.ulid.ULID;
 import org.immutables.value.Value;
 
+@Wrapper
 @Value.Immutable(builder = false)
 abstract class AbstractRequestId implements Wrapped<ULID> {
 
   private static final long serialVersionUID = -1015384163486684501L;
 
+  @Override
+  public abstract ULID getValue();
+
   public static RequestId fromString(final String ulidString) {
-    return RequestId.of(ULID.fromString(ulidString));
+    return RequestId.from(ULID.fromString(ulidString));
   }
 
   public static RequestId create() {
-    return RequestId.of(ULID.nextULID());
+    return RequestId.from(ULID.nextULID());
   }
 }

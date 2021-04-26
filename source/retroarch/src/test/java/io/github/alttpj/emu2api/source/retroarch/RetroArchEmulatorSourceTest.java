@@ -18,12 +18,8 @@ package io.github.alttpj.emu2api.source.retroarch;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 
-import io.github.alttpj.emu2api.source.config.base.Emulator;
 import io.github.alttpj.emu2api.source.config.base.EmulatorConfig;
 import io.github.alttpj.emu2api.source.config.base.GeneralConfig;
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.inject.Produces;
-import jakarta.inject.Inject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
@@ -32,24 +28,23 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.StringJoiner;
 import java.util.concurrent.ConcurrentHashMap;
-import org.apache.meecrowave.Meecrowave;
-import org.apache.meecrowave.junit5.MeecrowaveConfig;
-import org.apache.meecrowave.testing.ConfigurationInject;
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.yaml.snakeyaml.Yaml;
 
-@MeecrowaveConfig(skipHttp = true)
-@ApplicationScoped
 public class RetroArchEmulatorSourceTest {
 
-  @ConfigurationInject private Meecrowave.Builder config;
+  private RetroArchEmulatorSource retroArchEmulatorSource;
 
-  @Inject private RetroArchEmulatorSource retroArchEmulatorSource;
+  @BeforeEach
+  public void setUp() {
+    this.retroArchEmulatorSource = new RetroArchEmulatorSource();
+    this.retroArchEmulatorSource.setGeneralConfig(this.produceGeneralConfig());
+    this.retroArchEmulatorSource.setRetroArchConfig(this.produceEmulatorConfig());
+  }
 
-  @Produces
-  @Emulator(name = "RetroArch")
-  public EmulatorConfig produceConfig() {
+  public EmulatorConfig produceEmulatorConfig() {
     final Yaml yaml = new Yaml();
     try (final var yamlIs = openYamlConfig()) {
       final Map<String, Object> yamlConfig = yaml.load(yamlIs);
@@ -65,7 +60,6 @@ public class RetroArchEmulatorSourceTest {
     }
   }
 
-  @Produces
   public GeneralConfig produceGeneralConfig() {
     return new GeneralConfig() {
       @Override
@@ -97,6 +91,9 @@ public class RetroArchEmulatorSourceTest {
         "/io/github/alttpj/emu2api/source/retroarch/test-config.yaml");
   }
 
+  /**
+   * A simple config object which is testable.
+   */
   private static class SimpleRetroArchEmulatorConfig implements EmulatorConfig {
 
     private final Map<String, Object> configMap = new ConcurrentHashMap<>();

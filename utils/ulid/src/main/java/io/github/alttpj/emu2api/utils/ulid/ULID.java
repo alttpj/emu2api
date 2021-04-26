@@ -16,6 +16,7 @@
 
 package io.github.alttpj.emu2api.utils.ulid;
 
+import io.github.alttpj.emu2api.utils.ulid.impl.ULIDImplementation;
 import java.io.Serializable;
 
 /**

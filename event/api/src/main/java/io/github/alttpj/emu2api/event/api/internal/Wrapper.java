@@ -23,6 +23,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import org.immutables.value.Value;
+import org.immutables.value.Value.Style.ImplementationVisibility;
 
 @Documented
 @Retention(RetentionPolicy.CLASS)
@@ -33,5 +34,7 @@ import org.immutables.value.Value;
     stagedBuilder = false,
     strictBuilder = false,
     allParameters = true,
+    typeImmutable = "*",
+    visibility = ImplementationVisibility.PUBLIC,
     of = "from")
 public @interface Wrapper {}
