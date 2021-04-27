@@ -44,13 +44,14 @@ public class RetroArchConnectionTest {
     this.channel.register(this.selector, SelectionKey.OP_READ);
 
     this.responseAction = new ReplyToVersionAction();
-    CompletableFuture.runAsync(() -> {
-      try {
-        this.selector.select(this.responseAction, 500L);
-      } catch (final IOException javaIoIOException) {
-        throw new UncheckedIOException(javaIoIOException);
-      }
-    });
+    CompletableFuture.runAsync(
+        () -> {
+          try {
+            this.selector.select(this.responseAction, 500L);
+          } catch (final IOException javaIoIOException) {
+            throw new UncheckedIOException(javaIoIOException);
+          }
+        });
   }
 
   @AfterEach

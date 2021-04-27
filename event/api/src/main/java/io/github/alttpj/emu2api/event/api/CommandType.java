@@ -26,17 +26,11 @@ import java.util.Optional;
 import java.util.StringJoiner;
 
 public enum CommandType {
-  /**
-   * Queries the emulators for recognized devices.
-   */
+  /** Queries the emulators for recognized devices. */
   DEVICE_LIST("DeviceList", List.of()),
-  /**
-   * Attaches to a given device.
-   */
+  /** Attaches to a given device. */
   ATTACH("Attach", List.of(String.class)),
-  /**
-   * Sets a name to the session.
-   */
+  /** Sets a name to the session. */
   NAME("Name", List.of(String.class));
 
   private final String opcode;

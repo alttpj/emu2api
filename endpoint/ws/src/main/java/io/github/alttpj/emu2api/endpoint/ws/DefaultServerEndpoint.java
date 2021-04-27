@@ -74,11 +74,13 @@ public class DefaultServerEndpoint {
   @OnMessage
   public void onMessage(final Session session, final Usb2SnesRequest message) throws IOException {
     final CommandType commandType = CommandType.getByOpCode(message.getOpcode()).orElseThrow();
-    final CommandRequest commandRequest = CommandRequest.builder()
-        .commandType(commandType)
-        // if already attached to a device, add it.
-        .targetDevice(SESSION_INFO.get(session).getAttachedToDeviceName())
-        .build();
+    final CommandRequest commandRequest =
+        CommandRequest.builder()
+            .commandType(commandType)
+            // if already attached to a device, add it.
+            .targetDevice(SESSION_INFO.get(session).getAttachedToDeviceName())
+            .addAllCommandParameters(message.getOperands())
+            .build();
     PENDING_REQUESTS.put(commandRequest.getRequestId(), session);
 
     this.commandEvent
@@ -106,15 +108,16 @@ public class DefaultServerEndpoint {
   public void onAttach(final @Observes @Command(type = CommandType.ATTACH) CommandRequest attach) {
     final RequestId requestId = attach.getRequestId();
     final Session session = PENDING_REQUESTS.get(requestId);
-    SESSION_INFO.get(session)
-        .setAttachedToDeviceName((String) attach.getCommandParameters().get(0));
+    final String attachTo = (String) attach.getCommandParameters().get(0);
+    SESSION_INFO.get(session).setAttachedToDeviceName(attachTo);
     PENDING_REQUESTS.remove(requestId);
   }
 
   public void onName(final @Observes @Command(type = CommandType.NAME) CommandRequest nameRequest) {
     final RequestId requestId = nameRequest.getRequestId();
     final Session session = PENDING_REQUESTS.get(requestId);
-    SESSION_INFO.get(session)
+    SESSION_INFO
+        .get(session)
         .setAttachedToDeviceName((String) nameRequest.getCommandParameters().get(0));
     PENDING_REQUESTS.remove(requestId);
   }

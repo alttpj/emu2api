@@ -47,8 +47,6 @@ public class ReplyToVersionAction implements Consumer<SelectionKey> {
     } catch (final Throwable error) {
       System.out.println(error.getMessage());
     }
-
-
   }
 
   public boolean getResponded() {

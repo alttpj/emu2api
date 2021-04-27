@@ -26,22 +26,22 @@ import org.junit.jupiter.api.Test;
 
 public class CommandResponseTest {
 
-    @Test
-    @DisplayName("can be hold an exception and is not successful")
-    public void holdsExceptionWhenFailed() {
-        // setup:
-        final var responseEvent = CommandResponse.builder()
+  @Test
+  @DisplayName("can be hold an exception and is not successful")
+  public void holdsExceptionWhenFailed() {
+    // setup:
+    final var responseEvent =
+        CommandResponse.builder()
             .requestId(RequestId.create())
             .commandType(CommandType.DEVICE_LIST)
             .failedWith(Optional.of(new UnsupportedOperationException("not implemented")))
             .build();
 
-        //expect:
-        assertFalse(responseEvent.isSuccessful());
+    // expect:
+    assertFalse(responseEvent.isSuccessful());
 
-        final var failedWith = responseEvent.getFailedWith().get();
-        assertTrue(failedWith instanceof UnsupportedOperationException);
-        assertEquals("not implemented", failedWith.getMessage());
-    }
-
+    final var failedWith = responseEvent.getFailedWith().get();
+    assertTrue(failedWith instanceof UnsupportedOperationException);
+    assertEquals("not implemented", failedWith.getMessage());
+  }
 }

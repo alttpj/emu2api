@@ -4,9 +4,7 @@ module io.github.alttpj.emu2api.endpoint.ws {
   requires jakarta.websocket;
   requires jakarta.json.bind;
   requires jakarta.servlet;
-
   requires java.logging;
-
   requires io.github.alttpj.emu2api.event.api;
 
   exports io.github.alttpj.emu2api.endpoint.ws;

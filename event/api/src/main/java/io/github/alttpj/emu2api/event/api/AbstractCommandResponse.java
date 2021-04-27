@@ -34,9 +34,9 @@ abstract class AbstractCommandResponse {
   /**
    * Are the returnParameters to be returned to the client?
    *
-   * <p>Some commands, like attach, do not return anything.</p>
+   * <p>Some commands, like attach, do not return anything.
    *
-   * <p>Default: yes.</p>
+   * <p>Default: yes.
    *
    * @return whether to return the Stringlist from {@link #getReturnParameters()} to the client.
    */

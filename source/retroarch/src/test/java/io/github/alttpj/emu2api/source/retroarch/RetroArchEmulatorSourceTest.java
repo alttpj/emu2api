@@ -91,9 +91,7 @@ public class RetroArchEmulatorSourceTest {
         "/io/github/alttpj/emu2api/source/retroarch/test-config.yaml");
   }
 
-  /**
-   * A simple config object which is testable.
-   */
+  /** A simple config object which is testable. */
   private static class SimpleRetroArchEmulatorConfig implements EmulatorConfig {
 
     private final Map<String, Object> configMap = new ConcurrentHashMap<>();

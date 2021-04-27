@@ -28,17 +28,17 @@ public class TomlEmulatorConfigTest {
   @Test
   public void testReadTomlFile() throws URISyntaxException {
     // setup:
-    final URL resource = this.getClass()
-        .getResource("/io/github/alttpj/emu2api/source/config/toml/config-test.toml");
+    final URL resource =
+        this.getClass()
+            .getResource("/io/github/alttpj/emu2api/source/config/toml/config-test.toml");
 
     // when:
     final TomlEmulatorConfig config = new TomlEmulatorConfig(Paths.get(resource.toURI()));
 
     // then:
-    final Map<String, Object> configurationMap = config.getEmulatorConfig("RetroArch")
-        .getConfigurationMap();
+    final Map<String, Object> configurationMap =
+        config.getEmulatorConfig("RetroArch").getConfigurationMap();
     assert !configurationMap.isEmpty();
     assert ((List) configurationMap.get("instances")).size() == 2;
   }
-
 }

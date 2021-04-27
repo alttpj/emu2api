@@ -22,6 +22,8 @@ import java.util.StringJoiner;
 
 public class RetroArchDevice {
 
+  private static final String RETROARCH_NAME_PREFIX = "RetroArch_";
+
   private final ULID deviceId;
 
   private final String name;
@@ -33,9 +35,9 @@ public class RetroArchDevice {
   private final String transport;
 
   public RetroArchDevice(
-      final String name, final String host, final int port, final String transport) {
+      final String deviceName, final String host, final int port, final String transport) {
     this.deviceId = ULID.nextULID();
-    this.name = name;
+    this.name = RETROARCH_NAME_PREFIX + deviceName;
     this.host = host;
     this.port = port;
     this.transport = transport;

@@ -29,13 +29,12 @@ public class RetroArchDeviceFactoryTest {
     final RetroArchDeviceFactory retroArchDeviceFactory = new RetroArchDeviceFactory();
 
     // when
-    final Map<String, Object> defaultConfigurationMap = retroArchDeviceFactory
-        .getDefaultConfigurationMap();
+    final Map<String, Object> defaultConfigurationMap =
+        retroArchDeviceFactory.getDefaultConfigurationMap();
 
     // then
     assertEquals("localhost", defaultConfigurationMap.get("name"));
     assertEquals("localhost", defaultConfigurationMap.get("host"));
     assertEquals(55355, defaultConfigurationMap.get("port"));
   }
-
 }

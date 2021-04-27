@@ -38,5 +38,4 @@ public class TomlConfigProducerTest {
     assert !genConfig.isDebug();
     assert genConfig.getLogfile().equals(Optional.empty());
   }
-
 }

@@ -26,8 +26,7 @@ import java.util.Random;
  * https://github.com/ulid/spec
  */
 @SuppressWarnings("ALL")
-public
-class ULIDImplementation {
+public class ULIDImplementation {
 
   private static final char[] ENCODING_CHARS = {
     '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',

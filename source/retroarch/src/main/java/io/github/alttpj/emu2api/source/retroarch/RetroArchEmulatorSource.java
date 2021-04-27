@@ -131,8 +131,7 @@ public class RetroArchEmulatorSource implements EmulatorSource {
     this.generalConfig = generalConfig;
   }
 
-  public void setRetroArchConfig(
-      final EmulatorConfig retroArchConfig) {
+  public void setRetroArchConfig(final EmulatorConfig retroArchConfig) {
     this.retroArchConfig = retroArchConfig;
   }
 }

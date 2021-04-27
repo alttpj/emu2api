@@ -24,17 +24,16 @@ import org.junit.jupiter.api.Test;
 
 public class CommandRequestTest {
 
-    @Test
-    @DisplayName("assert a new RequestId is Generated for new commands")
-    public void testNewRequestIdPerNewCommand() {
-        // setup:
-        final var commandRequest1 = CommandRequest.of(CommandType.DEVICE_LIST);
-        final var commandRequest2 = CommandRequest.of(CommandType.DEVICE_LIST);
+  @Test
+  @DisplayName("assert a new RequestId is Generated for new commands")
+  public void testNewRequestIdPerNewCommand() {
+    // setup:
+    final var commandRequest1 = CommandRequest.of(CommandType.DEVICE_LIST);
+    final var commandRequest2 = CommandRequest.of(CommandType.DEVICE_LIST);
 
-        // expect:
-        assertNotEquals(commandRequest1, commandRequest2);
-        assertNotEquals(commandRequest1.getRequestId(), commandRequest2.getRequestId());
-        assertEquals(commandRequest1.getCommandType(), commandRequest2.getCommandType());
-
-    }
+    // expect:
+    assertNotEquals(commandRequest1, commandRequest2);
+    assertNotEquals(commandRequest1.getRequestId(), commandRequest2.getRequestId());
+    assertEquals(commandRequest1.getCommandType(), commandRequest2.getCommandType());
+  }
 }
