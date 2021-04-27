@@ -17,6 +17,7 @@
 package io.github.alttpj.emu2api.event.api;
 
 import java.util.List;
+import java.util.Optional;
 import org.immutables.value.Value;
 
 @Value.Immutable
@@ -31,4 +32,6 @@ abstract class AbstractCommandRequest {
   public abstract CommandType getCommandType();
 
   public abstract List<Object> getCommandParameters();
+
+  public abstract Optional<String> getTargetDevice();
 }

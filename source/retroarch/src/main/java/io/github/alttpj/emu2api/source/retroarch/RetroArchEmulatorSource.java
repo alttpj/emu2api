@@ -54,7 +54,7 @@ public class RetroArchEmulatorSource implements EmulatorSource {
 
   @Inject private Event<CommandResponse> commandResponseEvent;
 
-  public void commandRequest(
+  public void commandDeviceList(
       final @Observes @Command(type = CommandType.DEVICE_LIST) CommandRequest event) {
     if (!this.retroArchConfig.isEnabled()) {
       LOG.log(Level.FINE, "not enabled.");

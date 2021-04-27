@@ -31,6 +31,20 @@ abstract class AbstractCommandResponse {
 
   public abstract Optional<Throwable> getFailedWith();
 
+  /**
+   * Are the returnParameters to be returned to the client?
+   *
+   * <p>Some commands, like attach, do not return anything.</p>
+   *
+   * <p>Default: yes.</p>
+   *
+   * @return whether to return the Stringlist from {@link #getReturnParameters()} to the client.
+   */
+  @Value.Default
+  public boolean isReturnToClient() {
+    return true;
+  }
+
   @Value.Derived
   public boolean isSuccessful() {
     return this.getFailedWith().isEmpty();
