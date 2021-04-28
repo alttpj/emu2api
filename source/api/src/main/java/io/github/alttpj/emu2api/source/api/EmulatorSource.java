@@ -16,5 +16,22 @@
 
 package io.github.alttpj.emu2api.source.api;
 
+import java.util.Set;
+
 /** An emulator source is an implementation of a backend, like RetroArch or sd2snes. */
-public interface EmulatorSource {}
+public interface EmulatorSource {
+
+  /**
+   * Returns a set of discovered device names.
+   *
+   * <p><strong>Implementation hint:</strong><br>
+   * It is a good practive to add a prefix. E.g. if the emulator's configured name is 'localhost',
+   * then this should return a list containing 'SourceName_localhost'.
+   *
+   * <p><strong>Timing:</strong><br>
+   * The method is expected to return within 200ms. Otherwise the results may not be used.
+   *
+   * @return a set of prefixed emulator names.
+   */
+  Set<String> getDiscoveredDeviceNames();
+}

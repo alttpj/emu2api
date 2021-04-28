@@ -11,6 +11,8 @@
     <file url="file://$PROJECT_DIR$/endpoint/ws/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/event/api/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/event/api/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/event/dispatcher/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/event/dispatcher/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/server/meecrowave/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/server/meecrowave/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/source/api/src/main/java" charset="UTF-8" />

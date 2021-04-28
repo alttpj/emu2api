@@ -38,6 +38,7 @@ import jakarta.websocket.OnMessage;
 import jakarta.websocket.OnOpen;
 import jakarta.websocket.Session;
 import java.io.IOException;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -81,6 +82,17 @@ public class DefaultServerEndpoint {
             .targetDevice(SESSION_INFO.get(session).getAttachedToDeviceName())
             .addAllCommandParameters(message.getOperands())
             .build();
+
+    LOG.log(
+        Level.FINE,
+        () ->
+            String.format(
+                Locale.ENGLISH,
+                "Received command, type=[%s], parms=[%s], target=[%s]",
+                commandRequest.getCommandType(),
+                commandRequest.getCommandParameters(),
+                commandRequest.getTargetDevice()));
+
     PENDING_REQUESTS.put(commandRequest.getRequestId(), session);
 
     this.commandEvent

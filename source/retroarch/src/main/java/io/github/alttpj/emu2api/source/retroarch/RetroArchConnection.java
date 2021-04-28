@@ -17,7 +17,6 @@
 package io.github.alttpj.emu2api.source.retroarch;
 
 import java.io.IOException;
-import java.net.DatagramPacket;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.ClosedSelectorException;
@@ -25,7 +24,7 @@ import java.nio.channels.DatagramChannel;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
+import java.util.Objects;
 import java.util.StringJoiner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -39,11 +38,6 @@ public class RetroArchConnection {
   private DatagramChannel channel;
 
   private boolean isConnected;
-
-  private final byte[] receiveBuffer = new byte[1024];
-
-  private final DatagramPacket receivePacket =
-      new DatagramPacket(this.receiveBuffer, this.receiveBuffer.length);
 
   public RetroArchConnection(final RetroArchDevice device) {
     this.device = device;
@@ -67,6 +61,8 @@ public class RetroArchConnection {
     if (!this.channel.isConnected()) {
       return false;
     }
+
+    this.isConnected = true;
 
     try (final Selector reader = Selector.open()) {
       this.channel.register(reader, SelectionKey.OP_READ);
@@ -122,14 +118,29 @@ public class RetroArchConnection {
   }
 
   @Override
+  public boolean equals(final Object other) {
+    if (this == other) {
+      return true;
+    }
+    if (other == null || this.getClass() != other.getClass()) {
+      return false;
+    }
+    final RetroArchConnection that = (RetroArchConnection) other;
+    return this.device.equals(that.device);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(this.device);
+  }
+
+  @Override
   public String toString() {
     return new StringJoiner(", ", RetroArchConnection.class.getSimpleName() + "[", "]")
         .add("super=" + super.toString())
         .add("device=" + this.device)
         .add("channel=" + this.channel)
         .add("isConnected=" + this.isConnected)
-        .add("receiveBuffer=" + Arrays.toString(this.receiveBuffer))
-        .add("receivePacket=" + this.receivePacket)
         .toString();
   }
 }

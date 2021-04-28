@@ -85,11 +85,12 @@
       <groupId>io.github.alttpj.emu2api.endpoint</groupId>
       <artifactId>emu2api-endpoint-ws</artifactId>
     </dependency>
-    <!-- sources -->
     <dependency>
-      <groupId>io.github.alttpj.emu2api.source</groupId>
-      <artifactId>emu2api-source-retroarch</artifactId>
+      <groupId>io.github.alttpj.emu2api.event</groupId>
+      <artifactId>emu2api-event-dispatcher</artifactId>
+      <scope>runtime</scope>
     </dependency>
+
 
     <!-- config -->
     <!-- managed by profile -->

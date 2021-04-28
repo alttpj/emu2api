@@ -16,17 +16,13 @@
 
 package io.github.alttpj.emu2api.source.retroarch;
 
-import io.github.alttpj.emu2api.event.api.Command;
-import io.github.alttpj.emu2api.event.api.CommandRequest;
 import io.github.alttpj.emu2api.event.api.CommandResponse;
-import io.github.alttpj.emu2api.event.api.CommandType;
 import io.github.alttpj.emu2api.source.api.EmulatorSource;
 import io.github.alttpj.emu2api.source.config.base.Emulator;
 import io.github.alttpj.emu2api.source.config.base.EmulatorConfig;
 import io.github.alttpj.emu2api.source.config.base.GeneralConfig;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Event;
-import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
 import java.util.HashSet;
 import java.util.List;
@@ -54,29 +50,21 @@ public class RetroArchEmulatorSource implements EmulatorSource {
 
   @Inject private Event<CommandResponse> commandResponseEvent;
 
-  public void commandDeviceList(
-      final @Observes @Command(type = CommandType.DEVICE_LIST) CommandRequest event) {
+  @Override
+  public Set<String> getDiscoveredDeviceNames() {
     if (!this.retroArchConfig.isEnabled()) {
       LOG.log(Level.FINE, "not enabled.");
-      return;
+      return Set.of();
     }
 
     this.updateDevicesList();
 
-    final Set<String> onlineDevices =
-        CONNECTIONS.stream()
-            .filter(RetroArchConnection::canConnect)
-            .map(rac -> rac.getDevice().getName())
-            .collect(Collectors.toSet());
-
-    final CommandResponse empty =
-        CommandResponse.builder()
-            .requestId(event.getRequestId())
-            .commandType(event.getCommandType())
-            .addAllReturnParameters(onlineDevices)
-            .build();
-
-    this.commandResponseEvent.fire(empty);
+    return CONNECTIONS.stream()
+        // todo: make the canConnect wrapped with a timout.
+        .filter(RetroArchConnection::canConnect)
+        .map(RetroArchConnection::getDevice)
+        .map(RetroArchDevice::getName)
+        .collect(Collectors.toSet());
   }
 
   public Set<RetroArchDevice> updateDevicesList() {
