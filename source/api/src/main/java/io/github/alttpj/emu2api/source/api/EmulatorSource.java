@@ -22,6 +22,13 @@ import java.util.Set;
 public interface EmulatorSource {
 
   /**
+   * Returns the name of this source.
+   *
+   * @return the name of this source.
+   */
+  String getSourceName();
+
+  /**
    * Returns a set of discovered device names.
    *
    * <p><strong>Implementation hint:</strong><br>

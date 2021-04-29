@@ -18,20 +18,16 @@ package io.github.alttpj.emu2api.event.api;
 
 import java.util.List;
 import java.util.Optional;
-import org.immutables.value.Value;
 
-@Value.Immutable
-abstract class AbstractCommandRequest {
+public interface CommandRequest {
 
-  @Value.Default
-  public RequestId getRequestId() {
-    return RequestId.create();
-  }
+  RequestId getRequestId();
 
-  @Value.Parameter
-  public abstract CommandType getCommandType();
+  CommandType getCommandType();
 
-  public abstract List<Object> getCommandParameters();
+  List<String> getCommandParameters();
 
-  public abstract Optional<String> getTargetDevice();
+  Optional<String> getTargetDevice();
+
+  void addReturnParameters(final String name, final CommandResponse commandResponse);
 }

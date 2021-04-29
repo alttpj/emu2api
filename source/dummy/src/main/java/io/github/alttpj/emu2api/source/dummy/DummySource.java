@@ -14,31 +14,32 @@
  * limitations under the License.
  */
 
-package io.github.alttpj.emu2api.endpoint.ws.data;
+package io.github.alttpj.emu2api.source.dummy;
 
-import jakarta.json.bind.annotation.JsonbProperty;
-import java.util.Collection;
-import java.util.List;
+import io.github.alttpj.emu2api.source.api.EmulatorSource;
+import jakarta.enterprise.context.ApplicationScoped;
+import java.util.Set;
 import java.util.StringJoiner;
 
-public class Usb2SnesResult {
+@ApplicationScoped
+public class DummySource implements EmulatorSource {
 
-  private final List<String> results;
+  private static final String SOURCE_NAME = "DummySource";
 
-  public Usb2SnesResult(final Collection<String> results) {
-    this.results = List.copyOf(results);
+  @Override
+  public String getSourceName() {
+    return SOURCE_NAME;
   }
 
-  @JsonbProperty("Results")
-  public List<String> getResults() {
-    return this.results;
+  @Override
+  public Set<String> getDiscoveredDeviceNames() {
+    return Set.of(SOURCE_NAME + "_1");
   }
 
   @Override
   public String toString() {
-    return new StringJoiner(", ", Usb2SnesResult.class.getSimpleName() + "[", "]")
+    return new StringJoiner(", ", DummySource.class.getSimpleName() + "[", "]")
         .add("super=" + super.toString())
-        .add("results=" + this.results)
         .toString();
   }
 }

@@ -29,16 +29,42 @@ public enum CommandType {
   /** Queries the emulators for recognized devices. */
   DEVICE_LIST("DeviceList", List.of()),
   /** Attaches to a given device. */
-  ATTACH("Attach", List.of(String.class)),
+  ATTACH("Attach", List.of(String.class), false),
   /** Sets a name to the session. */
-  NAME("Name", List.of(String.class));
+  NAME("Name", List.of(String.class), false),
+  /** Infos about devices, e.g. version, internal device name by the source itself, etc. */
+  INFO("Info", List.of()),
+  /**
+   * GetAddress [offset, size].
+   *
+   * <p>To read memory from the device. Offset and size must be both encoded in hexadecimal. Offset
+   * are not Snes address, they are specific on how usb2snes store the various information (more
+   * later).
+   *
+   * <p>This read the first 256 bytes from the WRAM: {@code ["F50000", "100"]}.
+   *
+   * <p>See: <a
+   * href="https://github.com/Skarsnik/QUsb2snes/blob/d11c5749d6c27879552a06d7a858eb228491bd69/docs/Procotol.md#usb2snes-address">Protocol.md#Usb2snes-address</a>
+   */
+  GET_ADDRESS("GetAddress", List.of(String.class, String.class)),
+  /** PutAddress [offset, size]. */
+  PUT_ADDRESS("PutAddress", List.of(String.class, String.class));
 
   private final String opcode;
   private final List<Class<?>> parameterTypes;
+  private final boolean returnToClient;
 
   CommandType(final String opcode, final List<Class<?>> parameterTypes) {
     this.opcode = opcode;
     this.parameterTypes = unmodifiableList(parameterTypes);
+    this.returnToClient = true;
+  }
+
+  CommandType(
+      final String opcode, final List<Class<?>> parameterTypes, final boolean returnToClient) {
+    this.opcode = opcode;
+    this.parameterTypes = unmodifiableList(parameterTypes);
+    this.returnToClient = returnToClient;
   }
 
   public String getOpcode() {
@@ -49,8 +75,20 @@ public enum CommandType {
     return this.parameterTypes;
   }
 
-  public static Optional<CommandType> getByOpCode(final String opcode) {
+  public static Optional<CommandType> getByOpCodeOpt(final String opcode) {
     return Arrays.stream(values()).filter(ct -> opcodeMatchesIgnoreCase(ct, opcode)).findAny();
+  }
+
+  public static CommandType getByOpCode(final String opcode) {
+    return getByOpCodeOpt(opcode)
+        .orElseThrow(
+            () ->
+                new UnsupportedOperationException(
+                    "Unknown opcode: [" + opcode + "]. Not implemented?!"));
+  }
+
+  public boolean isReturnToClient() {
+    return this.returnToClient;
   }
 
   private static boolean opcodeMatchesIgnoreCase(

@@ -28,19 +28,19 @@
   </parent>
 
   <groupId>io.github.alttpj.emu2api.source</groupId>
-  <artifactId>emu2api-source-api</artifactId>
+  <artifactId>emu2api-source-dummy</artifactId>
   <version>1.0.0-SNAPSHOT</version>
-  <name>emu2api :: source :: api</name>
+  <name>emu2api :: source :: dummy</name>
 
   <dependencies>
     <dependency>
-      <groupId>io.github.alttpj.emu2api.utils</groupId>
-      <artifactId>emu2api-utils-ulid</artifactId>
+      <groupId>io.github.alttpj.emu2api.source</groupId>
+      <artifactId>emu2api-source-api</artifactId>
     </dependency>
 
     <dependency>
-      <groupId>io.github.alttpj.emu2api.event</groupId>
-      <artifactId>emu2api-event-api</artifactId>
+      <groupId>io.github.alttpj.emu2api.config</groupId>
+      <artifactId>emu2api-config-base</artifactId>
     </dependency>
 
     <dependency>
@@ -48,6 +48,7 @@
       <artifactId>jakarta.enterprise.cdi-api</artifactId>
       <scope>provided</scope>
     </dependency>
+
   </dependencies>
 
 </project>

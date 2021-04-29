@@ -50,6 +50,7 @@
 
   <modules>
     <module>utils/ulid</module>
+    <module>utils/async</module>
 
     <module>event/api</module>
     <!-- for events that will need to go to multiple sources -->
@@ -62,6 +63,7 @@
 
     <!-- sources are emulator bindings, eg RetroArch uses an UDP socket, snes9x uses Lua. -->
     <module>source/api</module>
+    <module>source/dummy</module>
     <module>source/retroarch</module>
     <!-- <module>source/sd2snes</module> -->
 
@@ -82,6 +84,11 @@
         <version>${project.version}</version>
       </dependency>
       <dependency>
+        <groupId>io.github.alttpj.emu2api.utils</groupId>
+        <artifactId>emu2api-utils-async</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
         <groupId>io.github.alttpj.emu2api.event</groupId>
         <artifactId>emu2api-event-api</artifactId>
         <version>${project.version}</version>
@@ -91,11 +98,23 @@
         <artifactId>emu2api-event-dispatcher</artifactId>
         <version>${project.version}</version>
       </dependency>
+      <!-- sources -->
       <dependency>
         <groupId>io.github.alttpj.emu2api.source</groupId>
         <artifactId>emu2api-source-api</artifactId>
         <version>${project.version}</version>
       </dependency>
+      <dependency>
+        <groupId>io.github.alttpj.emu2api.source</groupId>
+        <artifactId>emu2api-source-dummy</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.github.alttpj.emu2api.source</groupId>
+        <artifactId>emu2api-source-retroarch</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <!-- config -->
       <dependency>
         <groupId>io.github.alttpj.emu2api.config</groupId>
         <artifactId>emu2api-config-base</artifactId>
@@ -109,11 +128,6 @@
       <dependency>
         <groupId>io.github.alttpj.emu2api.config</groupId>
         <artifactId>emu2api-config-yaml</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>io.github.alttpj.emu2api.source</groupId>
-        <artifactId>emu2api-source-retroarch</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

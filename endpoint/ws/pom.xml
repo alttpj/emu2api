@@ -37,6 +37,11 @@
       <groupId>io.github.alttpj.emu2api.event</groupId>
       <artifactId>emu2api-event-api</artifactId>
     </dependency>
+    <dependency>
+      <groupId>io.github.alttpj.emu2api.utils</groupId>
+      <artifactId>emu2api-utils-async</artifactId>
+      <scope>runtime</scope>
+    </dependency>
 
     <!-- ee APIs / mp APIs -->
     <dependency>

@@ -27,22 +27,12 @@
     <relativePath>../../pom.xml</relativePath>
   </parent>
 
-  <groupId>io.github.alttpj.emu2api.source</groupId>
-  <artifactId>emu2api-source-api</artifactId>
+  <groupId>io.github.alttpj.emu2api.utils</groupId>
+  <artifactId>emu2api-utils-async</artifactId>
   <version>1.0.0-SNAPSHOT</version>
-  <name>emu2api :: source :: api</name>
+  <name>emu2api :: utils :: async</name>
 
   <dependencies>
-    <dependency>
-      <groupId>io.github.alttpj.emu2api.utils</groupId>
-      <artifactId>emu2api-utils-ulid</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>io.github.alttpj.emu2api.event</groupId>
-      <artifactId>emu2api-event-api</artifactId>
-    </dependency>
-
     <dependency>
       <groupId>jakarta.enterprise</groupId>
       <artifactId>jakarta.enterprise.cdi-api</artifactId>

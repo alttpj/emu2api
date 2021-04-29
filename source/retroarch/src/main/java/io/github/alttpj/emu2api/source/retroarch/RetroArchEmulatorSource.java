@@ -16,13 +16,11 @@
 
 package io.github.alttpj.emu2api.source.retroarch;
 
-import io.github.alttpj.emu2api.event.api.CommandResponse;
 import io.github.alttpj.emu2api.source.api.EmulatorSource;
 import io.github.alttpj.emu2api.source.config.base.Emulator;
 import io.github.alttpj.emu2api.source.config.base.EmulatorConfig;
 import io.github.alttpj.emu2api.source.config.base.GeneralConfig;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.event.Event;
 import jakarta.inject.Inject;
 import java.util.HashSet;
 import java.util.List;
@@ -39,16 +37,20 @@ public class RetroArchEmulatorSource implements EmulatorSource {
       Logger.getLogger(RetroArchEmulatorSource.class.getCanonicalName());
 
   private static final Set<RetroArchConnection> CONNECTIONS = new HashSet<>();
+  private static final String SOURCE_NAME = "RetroArch";
 
   @Inject private RetroArchDeviceFactory deviceFactory;
 
   @Inject private GeneralConfig generalConfig;
 
   @Inject
-  @Emulator(name = "RetroArch")
+  @Emulator(name = SOURCE_NAME)
   private EmulatorConfig retroArchConfig;
 
-  @Inject private Event<CommandResponse> commandResponseEvent;
+  @Override
+  public String getSourceName() {
+    return SOURCE_NAME;
+  }
 
   @Override
   public Set<String> getDiscoveredDeviceNames() {

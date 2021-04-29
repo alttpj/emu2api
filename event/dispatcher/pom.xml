@@ -42,7 +42,17 @@
     <!-- sources -->
     <dependency>
       <groupId>io.github.alttpj.emu2api.source</groupId>
+      <artifactId>emu2api-source-dummy</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.github.alttpj.emu2api.source</groupId>
       <artifactId>emu2api-source-retroarch</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.github.alttpj.emu2api.utils</groupId>
+      <artifactId>emu2api-utils-async</artifactId>
       <scope>runtime</scope>
     </dependency>
 

@@ -16,8 +16,12 @@
     <file url="file://$PROJECT_DIR$/server/meecrowave/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/server/meecrowave/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/source/api/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/source/dummy/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/source/dummy/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/source/retroarch/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/source/retroarch/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/utils/async/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/utils/async/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/utils/ulid/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/utils/ulid/src/main/resources" charset="UTF-8" />
   </component>
