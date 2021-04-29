@@ -5,4 +5,5 @@ module io.github.alttpj.emu2api.event.dispatcher {
   requires io.github.alttpj.emu2api.event.api;
   requires jakarta.annotation;
   requires java.logging;
+  requires io.github.alttpj.emu2api.utils.async;
 }

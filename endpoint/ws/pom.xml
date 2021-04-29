@@ -40,7 +40,6 @@
     <dependency>
       <groupId>io.github.alttpj.emu2api.utils</groupId>
       <artifactId>emu2api-utils-async</artifactId>
-      <scope>runtime</scope>
     </dependency>
 
     <!-- ee APIs / mp APIs -->

@@ -23,10 +23,11 @@ import io.github.alttpj.emu2api.endpoint.ws.data.Usb2SnesResult;
 import io.github.alttpj.emu2api.event.api.Command;
 import io.github.alttpj.emu2api.event.api.CommandRequest;
 import io.github.alttpj.emu2api.event.api.CommandType;
+import io.github.alttpj.emu2api.utils.async.ExecutorName;
 import jakarta.enterprise.context.Dependent;
 import jakarta.enterprise.event.Event;
 import jakarta.enterprise.event.NotificationOptions;
-import jakarta.enterprise.event.Observes;
+import jakarta.enterprise.event.ObservesAsync;
 import jakarta.inject.Inject;
 import jakarta.websocket.CloseReason;
 import jakarta.websocket.CloseReason.CloseCodes;
@@ -62,7 +63,9 @@ public class DefaultServerEndpoint {
 
   @Inject private Event<CommandRequest> commandEvent;
 
-  @Inject private ExecutorService executorService;
+  @Inject
+  @ExecutorName("concurrent/frontend")
+  private ExecutorService executorService;
 
   @OnOpen
   public void onOpen(final Session session) throws IOException {
@@ -119,7 +122,7 @@ public class DefaultServerEndpoint {
     }
 
     if (!response.isAllSuccesful()) {
-      closeClientSession(session, response.getFirstFailedWith().orElseThrow());
+      this.onError(session, response.getFirstFailedWith().orElseThrow());
       return;
     }
 
@@ -139,16 +142,16 @@ public class DefaultServerEndpoint {
   }
 
   public void onAttach(
-      final @Observes @Command(type = CommandType.ATTACH) CallbackCommandRequest attach) {
+      final @ObservesAsync @Command(type = CommandType.ATTACH) CallbackCommandRequest attach) {
     final String attachTo = (String) attach.getCommandParameters().get(0);
     SESSION_INFO.get(attach.getSession()).setAttachedToDeviceName(attachTo);
   }
 
   public void onName(
-      final @Observes @Command(type = CommandType.NAME) CallbackCommandRequest nameRequest) {
+      final @ObservesAsync @Command(type = CommandType.NAME) CallbackCommandRequest nameRequest) {
     SESSION_INFO
         .get(nameRequest.getSession())
-        .setAttachedToDeviceName((String) nameRequest.getCommandParameters().get(0));
+        .setClientName((String) nameRequest.getCommandParameters().get(0));
   }
 
   private static void removePendingRequests(final Session session) {

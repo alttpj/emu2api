@@ -27,7 +27,7 @@ public class SessionInfo {
 
   public SessionInfo(final Session session) {
     // pojo
-    this.attachedToDeviceName = session.getId();
+    this.clientName = session.getId();
   }
 
   public String getClientName() {

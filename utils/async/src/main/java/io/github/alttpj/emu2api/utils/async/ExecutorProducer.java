@@ -21,7 +21,6 @@ import jakarta.enterprise.context.Dependent;
 import jakarta.enterprise.inject.Disposes;
 import jakarta.enterprise.inject.Produces;
 import jakarta.enterprise.inject.spi.InjectionPoint;
-import jakarta.inject.Named;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -43,19 +42,19 @@ public class ExecutorProducer {
   private static final Map<String, ExecutorService> PRODUCED = new ConcurrentHashMap<>();
 
   private String namedOrClassName(final InjectionPoint injectionPoint) {
-    return Optional.ofNullable(injectionPoint.getAnnotated().getAnnotation(Named.class))
-        .map(Named::value)
-        .orElseGet(() -> injectionPoint.getBean().getBeanClass().getName());
+    return Optional.ofNullable(injectionPoint.getAnnotated().getAnnotation(ExecutorName.class))
+        .map(ExecutorName::value)
+        .orElseThrow();
   }
 
   @Produces
   @Dependent
+  @ExecutorName
   public ExecutorService produceExecutorService(final InjectionPoint injectionPoint) {
     final String name = this.namedOrClassName(injectionPoint);
     if (PRODUCED.get(name) != null) {
       return PRODUCED.get(name);
     }
-
     final ExecutorService executorService = Executors.newWorkStealingPool();
     PRODUCED.put(name, executorService);
 
@@ -63,7 +62,7 @@ public class ExecutorProducer {
         Level.INFO,
         () ->
             String.format(
-                Locale.ENGLISH, "producing pool [%s] for IP [%s]", executorService, name));
+                Locale.ENGLISH, "producing pool [%s] with name [%s]", executorService, name));
 
     return executorService;
   }
@@ -75,7 +74,11 @@ public class ExecutorProducer {
     try {
       executorService.awaitTermination(100L, TimeUnit.MILLISECONDS);
     } catch (final InterruptedException javaLangInterruptedException) {
-      LOG.log(Level.WARNING, "Unable to shut down executorService", executorService);
+      Thread.currentThread().interrupt();
+      LOG.log(
+          Level.WARNING,
+          javaLangInterruptedException,
+          () -> "Unable to shut down executorService: " + executorService);
     }
 
     executorService.shutdownNow();

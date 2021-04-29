@@ -92,6 +92,7 @@ public abstract class AbstractCommandRequest implements CommandRequest {
         .add("commandType=" + this.commandType)
         .add("commandParameters=" + this.commandParameters)
         .add("targetDevice='" + this.targetDevice + "'")
+        .add("responses=" + this.responses)
         .toString();
   }
 }

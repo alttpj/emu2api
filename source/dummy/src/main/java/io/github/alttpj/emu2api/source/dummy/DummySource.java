@@ -18,6 +18,7 @@ package io.github.alttpj.emu2api.source.dummy;
 
 import io.github.alttpj.emu2api.source.api.EmulatorSource;
 import jakarta.enterprise.context.ApplicationScoped;
+import java.util.List;
 import java.util.Set;
 import java.util.StringJoiner;
 
@@ -34,6 +35,18 @@ public class DummySource implements EmulatorSource {
   @Override
   public Set<String> getDiscoveredDeviceNames() {
     return Set.of(SOURCE_NAME + "_1");
+  }
+
+  @Override
+  public boolean hasDevice(final String wantedDeviceName) {
+    return this.getDiscoveredDeviceNames().contains(wantedDeviceName);
+  }
+
+  @Override
+  public Set<String> getInfo(final String deviceName, final List<String> commandParameters) {
+    // TODO: implement
+    throw new UnsupportedOperationException(
+        "not yet implemented: [io.github.alttpj.emu2api.source.dummy.DummySource::getInfo].");
   }
 
   @Override

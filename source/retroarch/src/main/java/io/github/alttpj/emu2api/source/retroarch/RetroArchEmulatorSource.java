@@ -69,6 +69,19 @@ public class RetroArchEmulatorSource implements EmulatorSource {
         .collect(Collectors.toSet());
   }
 
+  @Override
+  public boolean hasDevice(final String wantedDeviceName) {
+    return CONNECTIONS.stream()
+        .anyMatch(conn -> wantedDeviceName.equals(conn.getDevice().getName()));
+  }
+
+  @Override
+  public Set<String> getInfo(final String deviceName, final List<String> commandParameters) {
+    // TODO: implement
+    throw new UnsupportedOperationException(
+        "not yet implemented: [io.github.alttpj.emu2api.source.retroarch.RetroArchEmulatorSource::getInfo].");
+  }
+
   public Set<RetroArchDevice> updateDevicesList() {
     if (!this.retroArchConfig.isEnabled()) {
       return Set.of();

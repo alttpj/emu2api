@@ -6,6 +6,7 @@ module io.github.alttpj.emu2api.endpoint.ws {
   requires jakarta.servlet;
   requires java.logging;
   requires io.github.alttpj.emu2api.event.api;
+  requires io.github.alttpj.emu2api.utils.async;
 
   exports io.github.alttpj.emu2api.endpoint.ws;
   exports io.github.alttpj.emu2api.endpoint.ws.json;
