@@ -6,8 +6,10 @@ module io.github.alttpj.emu2api.source.config.toml {
   requires com.fasterxml.jackson.dataformat.toml;
 
   opens io.github.alttpj.emu2api.config.toml to
-      com.fasterxml.jackson.dataformat.toml;
+      com.fasterxml.jackson.dataformat.toml,
+      com.fasterxml.jackson.databind;
 
   exports io.github.alttpj.emu2api.config.toml to
-      com.fasterxml.jackson.dataformat.toml;
+      com.fasterxml.jackson.dataformat.toml,
+      com.fasterxml.jackson.databind;
 }
