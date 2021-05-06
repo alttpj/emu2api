@@ -31,19 +31,27 @@ import jakarta.enterprise.event.ObservesAsync;
 import jakarta.inject.Inject;
 import jakarta.websocket.CloseReason;
 import jakarta.websocket.CloseReason.CloseCodes;
-import jakarta.websocket.EncodeException;
 import jakarta.websocket.OnClose;
 import jakarta.websocket.OnError;
 import jakarta.websocket.OnMessage;
 import jakarta.websocket.OnOpen;
+import jakarta.websocket.RemoteEndpoint.Async;
 import jakarta.websocket.Session;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.math.BigInteger;
+import java.nio.ByteBuffer;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -130,15 +138,53 @@ public class DefaultServerEndpoint {
       return;
     }
 
+    final Future<Void> voidFuture = this.doSendResponse(response, session);
+    CompletableFuture.supplyAsync(
+            () -> {
+              try {
+                return voidFuture.get(500L, TimeUnit.MILLISECONDS);
+              } catch (final InterruptedException
+                  | ExecutionException
+                  | TimeoutException javaLangInterruptedException) {
+                throw new CompletionException(javaLangInterruptedException);
+              }
+            },
+            this.executorService)
+        .whenCompleteAsync(
+            (result, error) -> {
+              if (error != null) {
+                LOG.log(Level.WARNING, "unable to complete request: ", error);
+              }
+            });
+  }
+
+  protected Future<Void> doSendResponse(
+      final CallbackCommandRequest response, final Session session) {
+    final Async asyncRemote = session.getAsyncRemote();
+    asyncRemote.setSendTimeout(100L);
+
+    if (response.isBinaryResponse()) {
+      final ByteBuffer binaryResponse = response.getBinaryResponse();
+      LOG.log(
+          Level.INFO,
+          () ->
+              String.format(
+                  Locale.ENGLISH,
+                  "sending response [%s] to session [%s].",
+                  new BigInteger(1, binaryResponse.array()).toString(16),
+                  session));
+      return asyncRemote.sendBinary(binaryResponse);
+    }
+
     final Usb2SnesResult usb2SnesResult = new Usb2SnesResult(response.getAggregatedResponses());
 
-    try {
-      session.getBasicRemote().sendObject(usb2SnesResult);
-    } catch (final IOException ioException) {
-      throw new UncheckedIOException(ioException);
-    } catch (final EncodeException encodeException) {
-      throw new IllegalArgumentException(encodeException);
-    }
+    LOG.log(
+        Level.INFO,
+        () ->
+            String.format(
+                Locale.ENGLISH, "sending response [%s] to session [%s].", usb2SnesResult, session));
+
+    return asyncRemote.sendObject(usb2SnesResult);
   }
 
   public void onAttach(

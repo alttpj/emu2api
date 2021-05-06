@@ -22,6 +22,7 @@ import io.github.alttpj.emu2api.event.api.CommandRequest;
 import io.github.alttpj.emu2api.event.api.CommandResponse;
 import io.github.alttpj.emu2api.event.api.CommandType;
 import io.github.alttpj.emu2api.event.api.RequestId;
+import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -36,6 +37,7 @@ public abstract class AbstractCommandRequest implements CommandRequest {
   private final String targetDevice;
 
   private final Map<String, CommandResponse> responses;
+  private ByteBuffer binaryResponseParameter;
 
   public AbstractCommandRequest(
       final CommandType type, final List<String> commandParameters, final String targetDevice) {
@@ -77,6 +79,22 @@ public abstract class AbstractCommandRequest implements CommandRequest {
 
   public Map<String, CommandResponse> getResponses() {
     return this.responses;
+  }
+
+  public boolean isBinaryResponse() {
+    return this.commandType.isBinaryResponse();
+  }
+
+  public ByteBuffer getBinaryResponse() {
+    return this.binaryResponseParameter;
+  }
+
+  public void setBinaryResponse(final ByteBuffer byteBuffer) {
+    if (this.binaryResponseParameter != null) {
+      throw new IllegalStateException("Response already set!");
+    }
+
+    this.binaryResponseParameter = byteBuffer;
   }
 
   @Override

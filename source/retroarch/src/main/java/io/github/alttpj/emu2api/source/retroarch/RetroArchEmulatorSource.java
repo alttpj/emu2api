@@ -16,19 +16,26 @@
 
 package io.github.alttpj.emu2api.source.retroarch;
 
+import static java.util.Collections.unmodifiableList;
+import static java.util.stream.Collectors.toSet;
+import static java.util.stream.Collectors.toUnmodifiableList;
+
 import io.github.alttpj.emu2api.source.api.EmulatorSource;
 import io.github.alttpj.emu2api.source.config.base.Emulator;
 import io.github.alttpj.emu2api.source.config.base.EmulatorConfig;
 import io.github.alttpj.emu2api.source.config.base.GeneralConfig;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class RetroArchEmulatorSource implements EmulatorSource {
@@ -53,10 +60,10 @@ public class RetroArchEmulatorSource implements EmulatorSource {
   }
 
   @Override
-  public Set<String> getDiscoveredDeviceNames() {
+  public List<String> getDiscoveredDeviceNames() {
     if (!this.retroArchConfig.isEnabled()) {
       LOG.log(Level.FINE, "not enabled.");
-      return Set.of();
+      return List.of();
     }
 
     this.updateDevicesList();
@@ -66,7 +73,7 @@ public class RetroArchEmulatorSource implements EmulatorSource {
         .filter(RetroArchConnection::canConnect)
         .map(RetroArchConnection::getDevice)
         .map(RetroArchDevice::getName)
-        .collect(Collectors.toSet());
+        .collect(toUnmodifiableList());
   }
 
   @Override
@@ -76,10 +83,51 @@ public class RetroArchEmulatorSource implements EmulatorSource {
   }
 
   @Override
-  public Set<String> getInfo(final String deviceName, final List<String> commandParameters) {
-    // TODO: implement
-    throw new UnsupportedOperationException(
-        "not yet implemented: [io.github.alttpj.emu2api.source.retroarch.RetroArchEmulatorSource::getInfo].");
+  public List<String> getInfo(final String deviceName, final List<String> commandParameters) {
+    final Optional<RetroArchConnection> deviceOpt =
+        CONNECTIONS.stream()
+            .filter(conn -> deviceName.equals(conn.getDevice().getName()))
+            .findAny();
+    if (deviceOpt.isEmpty()) {
+      throw new IllegalStateException("Device got disconnected: " + deviceName + "!");
+    }
+
+    final RetroArchConnection connection = deviceOpt.orElseThrow();
+
+    final GenericResponseReader genericResponseReader = new GenericResponseReader(2048);
+
+    /*
+     final byte[] info2Response =
+       connection.sendCommand(genericResponseReader, "READ_CORE_RAM FFC0 128");
+    */
+
+    final List<String> resultList = new ArrayList<>();
+    resultList.add(connection.getVersion());
+    resultList.addAll(RetroArchConnection.DEFAULT_FLAGS);
+
+    return unmodifiableList(resultList);
+  }
+
+  @Override
+  public ByteBuffer getAddr(final String deviceName, final List<String> commandParameters) {
+    final Optional<RetroArchConnection> deviceOpt =
+        CONNECTIONS.stream()
+            .filter(conn -> deviceName.equals(conn.getDevice().getName()))
+            .findAny();
+    if (deviceOpt.isEmpty()) {
+      throw new IllegalStateException("Device got disconnected: " + deviceName + "!");
+    }
+
+    final RetroArchConnection connection = deviceOpt.orElseThrow();
+
+    final String size = commandParameters.get(1);
+    final int length = Integer.parseInt(size, 10);
+    final GenericResponseReader reader = new GenericResponseReader(length);
+    final String command =
+        String.format(Locale.ENGLISH, "READ_CORE_MEMORY %s %d", commandParameters.get(0), length);
+    final byte[] connReturn = connection.sendCommand(reader, command);
+
+    return ByteBuffer.wrap(connReturn);
   }
 
   public Set<RetroArchDevice> updateDevicesList() {
@@ -103,13 +151,13 @@ public class RetroArchEmulatorSource implements EmulatorSource {
                     "instances", List.of(this.deviceFactory.getDefaultConfigurationMap()));
 
     final Set<RetroArchDevice> devices =
-        instances.stream().map(this.deviceFactory::build).collect(Collectors.toSet());
+        instances.stream().map(this.deviceFactory::build).collect(toSet());
     return devices;
   }
 
   private void addAndRemoveDevices(final Set<RetroArchDevice> devices) {
     final Set<RetroArchConnection> connectionSet =
-        devices.stream().map(RetroArchConnection::new).collect(Collectors.toSet());
+        devices.stream().map(RetroArchConnection::new).collect(toSet());
 
     CONNECTIONS.addAll(connectionSet);
     for (final RetroArchConnection connection : CONNECTIONS) {

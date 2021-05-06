@@ -26,7 +26,8 @@ import jakarta.enterprise.event.ObservesAsync;
 import jakarta.enterprise.inject.Any;
 import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
-import java.util.Set;
+import java.nio.ByteBuffer;
+import java.util.List;
 import java.util.StringJoiner;
 import java.util.concurrent.ExecutorService;
 import java.util.function.BiFunction;
@@ -46,7 +47,7 @@ public class Emu2ApiCommandDispatcher extends AbstractCommandDelegatingDispatche
 
   public void commandDeviceList(
       final @ObservesAsync @Command(type = CommandType.DEVICE_LIST) CommandRequest event) {
-    final BiFunction<EmulatorSource, CommandRequest, Set<String>> executable =
+    final BiFunction<EmulatorSource, CommandRequest, List<String>> executable =
         (src, cmd) -> src.getDiscoveredDeviceNames();
 
     this.runCommands(event, executable);
@@ -54,8 +55,16 @@ public class Emu2ApiCommandDispatcher extends AbstractCommandDelegatingDispatche
 
   public void commandInfo(
       final @ObservesAsync @Command(type = CommandType.INFO) CommandRequest event) {
-    final BiFunction<EmulatorSource, CommandRequest, Set<String>> executable =
+    final BiFunction<EmulatorSource, CommandRequest, List<String>> executable =
         (src, cmd) -> src.getInfo(cmd.getTargetDevice().orElseThrow(), cmd.getCommandParameters());
+
+    this.runCommands(event, executable);
+  }
+
+  public void commandGetAddr(
+      final @ObservesAsync @Command(type = CommandType.GET_ADDRESS) CommandRequest event) {
+    final BiFunction<EmulatorSource, CommandRequest, ByteBuffer> executable =
+        (src, cmd) -> src.getAddr(cmd.getTargetDevice().orElseThrow(), cmd.getCommandParameters());
 
     this.runCommands(event, executable);
   }

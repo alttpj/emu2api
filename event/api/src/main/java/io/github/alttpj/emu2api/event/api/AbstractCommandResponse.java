@@ -16,6 +16,7 @@
 
 package io.github.alttpj.emu2api.event.api;
 
+import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.Optional;
 import org.immutables.value.Value;
@@ -48,5 +49,10 @@ abstract class AbstractCommandResponse {
   @Value.Derived
   public boolean isSuccessful() {
     return this.getFailedWith().isEmpty();
+  }
+
+  @Value.Default
+  public ByteBuffer getBinaryReturnParameter() {
+    return ByteBuffer.allocate(0);
   }
 }

@@ -104,7 +104,6 @@ public class Usb2SnesRequest {
   @Override
   public String toString() {
     return new StringJoiner(", ", Usb2SnesRequest.class.getSimpleName() + "[", "]")
-        .add("super=" + super.toString())
         .add("opcode='" + this.opcode + "'")
         .add("space='" + this.space + "'")
         .add("flags=" + this.flags)

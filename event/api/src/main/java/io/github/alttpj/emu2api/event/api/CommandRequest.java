@@ -16,6 +16,7 @@
 
 package io.github.alttpj.emu2api.event.api;
 
+import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,6 +29,12 @@ public interface CommandRequest {
   List<String> getCommandParameters();
 
   Optional<String> getTargetDevice();
+
+  boolean isBinaryResponse();
+
+  ByteBuffer getBinaryResponse();
+
+  void setBinaryResponse(final ByteBuffer byteBuffer);
 
   void addReturnParameters(final String name, final CommandResponse commandResponse);
 }

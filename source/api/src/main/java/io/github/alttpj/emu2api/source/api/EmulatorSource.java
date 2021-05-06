@@ -16,8 +16,8 @@
 
 package io.github.alttpj.emu2api.source.api;
 
+import java.nio.ByteBuffer;
 import java.util.List;
-import java.util.Set;
 
 /** An emulator source is an implementation of a backend, like RetroArch or sd2snes. */
 public interface EmulatorSource {
@@ -41,9 +41,11 @@ public interface EmulatorSource {
    *
    * @return a set of prefixed emulator names.
    */
-  Set<String> getDiscoveredDeviceNames();
+  List<String> getDiscoveredDeviceNames();
 
   boolean hasDevice(String wantedDeviceName);
 
-  Set<String> getInfo(String deviceName, List<String> commandParameters);
+  List<String> getInfo(String deviceName, List<String> commandParameters);
+
+  ByteBuffer getAddr(String deviceName, List<String> commandParameters);
 }

@@ -24,12 +24,16 @@ import java.nio.channels.DatagramChannel;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Objects;
 import java.util.StringJoiner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class RetroArchConnection {
+
+  public static final List<String> DEFAULT_FLAGS =
+      List.of("RetroArch", "CAN'T READ ROM INFO", "NO_ROM_READ", "NO_CONTROL_CMD", "NO_FILE_CMD");
 
   private static final Logger LOG = Logger.getLogger(RetroArchConnection.class.getCanonicalName());
 
@@ -38,6 +42,8 @@ public class RetroArchConnection {
   private DatagramChannel channel;
 
   private boolean isConnected;
+
+  private String version;
 
   public RetroArchConnection(final RetroArchDevice device) {
     this.device = device;
@@ -64,28 +70,17 @@ public class RetroArchConnection {
 
     this.isConnected = true;
 
-    try (final Selector reader = Selector.open()) {
-      this.channel.register(reader, SelectionKey.OP_READ);
+    final VersionResponseReader responseReader = new VersionResponseReader();
+    final byte[] versions = this.sendCommand(responseReader, "VERSION");
 
-      final ByteBuffer version = ByteBuffer.wrap("VERSION".getBytes(StandardCharsets.UTF_8));
-      this.channel.write(version);
-      final SocketVersionResponseReader socketVersionResponseReader =
-          new SocketVersionResponseReader();
-      try {
-        reader.select(socketVersionResponseReader, 200L);
-      } catch (final IOException
-          | ClosedSelectorException
-          | IllegalArgumentException readException) {
-        LOG.log(Level.WARNING, "unable to read", readException);
-        return false;
-      }
-
-      return socketVersionResponseReader.isConnected();
-    } catch (final IOException connectEx) {
-      LOG.log(Level.WARNING, "cannot connect to " + this.device + "!", connectEx);
+    if (versions != null) {
+      this.version = new String(versions, StandardCharsets.UTF_8);
+    } else {
+      LOG.log(Level.WARNING, "empty version for device " + this.device);
+      this.version = "unknown";
     }
 
-    return false;
+    return responseReader.isConnected();
   }
 
   private void tryConnect() {
@@ -96,6 +91,27 @@ public class RetroArchConnection {
     } catch (final IOException connectException) {
       LOG.log(Level.WARNING, "cannot connect to " + this.device + "!", connectException);
     }
+  }
+
+  public byte[] sendCommand(final AbstractUdpResponseReader responseReader, final String command) {
+    try (final Selector selector = Selector.open()) {
+      this.channel.register(selector, SelectionKey.OP_READ);
+
+      final ByteBuffer commandBuffer = ByteBuffer.wrap(command.getBytes(StandardCharsets.UTF_8));
+      this.channel.write(commandBuffer);
+
+      try {
+        selector.select(responseReader, 200L);
+      } catch (final IOException
+          | ClosedSelectorException
+          | IllegalArgumentException readException) {
+        LOG.log(Level.WARNING, "unable to read", readException);
+      }
+    } catch (final IOException connectEx) {
+      LOG.log(Level.WARNING, "cannot connect to " + this.device + "!", connectEx);
+    }
+
+    return responseReader.getReadBuffer();
   }
 
   public void close() {
@@ -115,6 +131,10 @@ public class RetroArchConnection {
 
   public RetroArchDevice getDevice() {
     return this.device;
+  }
+
+  public String getVersion() {
+    return this.version;
   }
 
   @Override
@@ -139,6 +159,7 @@ public class RetroArchConnection {
     return new StringJoiner(", ", RetroArchConnection.class.getSimpleName() + "[", "]")
         .add("super=" + super.toString())
         .add("device=" + this.device)
+        .add("version=" + this.version)
         .add("channel=" + this.channel)
         .add("isConnected=" + this.isConnected)
         .toString();

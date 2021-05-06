@@ -46,18 +46,20 @@ public enum CommandType {
    * <p>See: <a
    * href="https://github.com/Skarsnik/QUsb2snes/blob/d11c5749d6c27879552a06d7a858eb228491bd69/docs/Procotol.md#usb2snes-address">Protocol.md#Usb2snes-address</a>
    */
-  GET_ADDRESS("GetAddress", List.of(String.class, String.class)),
+  GET_ADDRESS("GetAddress", List.of(String.class, String.class), true, true),
   /** PutAddress [offset, size]. */
   PUT_ADDRESS("PutAddress", List.of(String.class, String.class));
 
   private final String opcode;
   private final List<Class<?>> parameterTypes;
   private final boolean returnToClient;
+  private final boolean isBinaryResponse;
 
   CommandType(final String opcode, final List<Class<?>> parameterTypes) {
     this.opcode = opcode;
     this.parameterTypes = unmodifiableList(parameterTypes);
     this.returnToClient = true;
+    this.isBinaryResponse = false;
   }
 
   CommandType(
@@ -65,6 +67,18 @@ public enum CommandType {
     this.opcode = opcode;
     this.parameterTypes = unmodifiableList(parameterTypes);
     this.returnToClient = returnToClient;
+    this.isBinaryResponse = false;
+  }
+
+  CommandType(
+      final String opcode,
+      final List<Class<?>> parameterTypes,
+      final boolean returnToClient,
+      final boolean isBinaryResponse) {
+    this.opcode = opcode;
+    this.parameterTypes = unmodifiableList(parameterTypes);
+    this.returnToClient = returnToClient;
+    this.isBinaryResponse = isBinaryResponse;
   }
 
   public String getOpcode() {
@@ -89,6 +103,10 @@ public enum CommandType {
 
   public boolean isReturnToClient() {
     return this.returnToClient;
+  }
+
+  public boolean isBinaryResponse() {
+    return this.isBinaryResponse;
   }
 
   private static boolean opcodeMatchesIgnoreCase(

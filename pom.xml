@@ -218,6 +218,12 @@
         <version>4.0.3</version>
         <scope>test</scope>
       </dependency>
+      <dependency>
+        <groupId>org.mockito</groupId>
+        <artifactId>mockito-core</artifactId>
+        <version>3.9.0</version>
+        <scope>test</scope>
+      </dependency>
 
       <!-- meecrowave test dependencies -->
       <dependency>
@@ -278,6 +284,12 @@
           <artifactId>hamcrest-core</artifactId>
         </exclusion>
       </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <version>3.9.0</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.meecrowave</groupId>

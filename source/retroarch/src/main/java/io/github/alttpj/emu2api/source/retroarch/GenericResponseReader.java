@@ -14,30 +14,23 @@
  * limitations under the License.
  */
 
-package io.github.alttpj.emu2api.endpoint.ws.data;
+package io.github.alttpj.emu2api.source.retroarch;
 
-import jakarta.json.bind.annotation.JsonbProperty;
-import java.util.Collection;
-import java.util.List;
-import java.util.StringJoiner;
+public class GenericResponseReader extends AbstractUdpResponseReader {
 
-public class Usb2SnesResult {
+  private final int bufferSize;
 
-  private final List<String> results;
-
-  public Usb2SnesResult(final Collection<String> results) {
-    this.results = List.copyOf(results);
-  }
-
-  @JsonbProperty("Results")
-  public List<String> getResults() {
-    return this.results;
+  public GenericResponseReader(final int bufferSize) {
+    this.bufferSize = Math.min(32, bufferSize);
   }
 
   @Override
-  public String toString() {
-    return new StringJoiner(", ", Usb2SnesResult.class.getSimpleName() + "[", "]")
-        .add("results=" + this.results)
-        .toString();
+  protected int getReadBufferSize() {
+    return this.bufferSize;
+  }
+
+  @Override
+  protected void processResponse() {
+    // no operation, return raw
   }
 }

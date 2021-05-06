@@ -18,8 +18,8 @@ package io.github.alttpj.emu2api.source.dummy;
 
 import io.github.alttpj.emu2api.source.api.EmulatorSource;
 import jakarta.enterprise.context.ApplicationScoped;
+import java.nio.ByteBuffer;
 import java.util.List;
-import java.util.Set;
 import java.util.StringJoiner;
 
 @ApplicationScoped
@@ -33,8 +33,8 @@ public class DummySource implements EmulatorSource {
   }
 
   @Override
-  public Set<String> getDiscoveredDeviceNames() {
-    return Set.of(SOURCE_NAME + "_1");
+  public List<String> getDiscoveredDeviceNames() {
+    return List.of(SOURCE_NAME + "_1");
   }
 
   @Override
@@ -43,10 +43,17 @@ public class DummySource implements EmulatorSource {
   }
 
   @Override
-  public Set<String> getInfo(final String deviceName, final List<String> commandParameters) {
+  public List<String> getInfo(final String deviceName, final List<String> commandParameters) {
     // TODO: implement
     throw new UnsupportedOperationException(
         "not yet implemented: [io.github.alttpj.emu2api.source.dummy.DummySource::getInfo].");
+  }
+
+  @Override
+  public ByteBuffer getAddr(final String deviceName, final List<String> commandParameters) {
+    // TODO: implement
+    throw new UnsupportedOperationException(
+        "not yet implemented: [io.github.alttpj.emu2api.source.dummy.DummySource::getAddr].");
   }
 
   @Override

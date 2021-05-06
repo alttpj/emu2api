@@ -22,17 +22,20 @@ import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.SelectableChannel;
 import java.nio.channels.SelectionKey;
-import java.nio.charset.StandardCharsets;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class SocketVersionResponseReader implements Consumer<SelectionKey> {
+public abstract class AbstractUdpResponseReader implements Consumer<SelectionKey> {
 
   private static final Logger LOG =
-      Logger.getLogger(SocketVersionResponseReader.class.getCanonicalName());
+      Logger.getLogger(AbstractUdpResponseReader.class.getCanonicalName());
 
   private boolean connected;
+
+  private ByteBuffer readBuffer;
+
+  private int readCount;
 
   @Override
   public void accept(final SelectionKey selectionKey) {
@@ -50,26 +53,18 @@ public class SocketVersionResponseReader implements Consumer<SelectionKey> {
     }
 
     this.readResponse(datagramChannel);
+    this.processResponse();
   }
 
   protected void readResponse(final DatagramChannel datagramChannel) {
     try {
-      final ByteBuffer readBuffer = ByteBuffer.allocate(512);
-      final int read = datagramChannel.read(readBuffer);
+      this.readBuffer = ByteBuffer.allocate(this.getReadBufferSize());
+      this.readBuffer.clear();
+      this.readCount = datagramChannel.read(this.readBuffer);
 
-      if (read <= 0) {
-        this.connected = false;
-        return;
+      if (this.readCount <= 0) {
+        this.setConnected(false);
       }
-
-      final String version = new String(readBuffer.array(), 0, read, StandardCharsets.UTF_8);
-      if (version.startsWith("1.9.") || version.startsWith("2.")) {
-        this.connected = true;
-        return;
-      }
-
-      LOG.log(Level.WARNING, "unknown version or unsupported version: " + version);
-      this.connected = false;
     } catch (final PortUnreachableException portUnreachableException) {
       if (LOG.isLoggable(Level.FINER)) {
         LOG.log(
@@ -78,14 +73,33 @@ public class SocketVersionResponseReader implements Consumer<SelectionKey> {
         LOG.log(Level.INFO, "Destination port unreachable. RA not running?");
       }
 
-      this.connected = false;
-    } catch (final IOException javaIoIOException) {
-      LOG.log(Level.WARNING, "Unexpected read exception.", javaIoIOException);
-      this.connected = false;
+      this.setConnected(false);
+    } catch (final IOException ioException) {
+      LOG.log(Level.WARNING, "Unexpected read exception.", ioException);
+      this.setConnected(false);
     }
   }
 
+  protected abstract int getReadBufferSize();
+
+  protected abstract void processResponse();
+
   public boolean isConnected() {
     return this.connected;
+  }
+
+  public void setConnected(final boolean connected) {
+    this.connected = connected;
+  }
+
+  public byte[] getReadBuffer() {
+    if (this.readBuffer == null) {
+      return null;
+    }
+
+    final byte[] bytes = new byte[this.readCount];
+    this.readBuffer.flip();
+    this.readBuffer.get(bytes);
+    return bytes;
   }
 }

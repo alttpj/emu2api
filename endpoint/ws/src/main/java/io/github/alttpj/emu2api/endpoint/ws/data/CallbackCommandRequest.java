@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.StringJoiner;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -70,11 +69,11 @@ public class CallbackCommandRequest extends AbstractCommandRequest {
     this.callbacks.forEach(callback -> callback.accept(this));
   }
 
-  public Set<String> getAggregatedResponses() {
+  public List<String> getAggregatedResponses() {
     return this.getResponses().values().stream()
         .map(CommandResponse::getReturnParameters)
         .flatMap(Collection::stream)
-        .collect(Collectors.toSet());
+        .collect(Collectors.toList());
   }
 
   public boolean isAllSuccesful() {

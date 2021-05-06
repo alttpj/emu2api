@@ -20,10 +20,10 @@ import io.github.alttpj.emu2api.event.api.CommandRequest;
 import io.github.alttpj.emu2api.event.api.CommandResponse;
 import io.github.alttpj.emu2api.source.api.EmulatorSource;
 import jakarta.enterprise.inject.Instance;
+import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -37,9 +37,8 @@ public abstract class AbstractCommandDelegatingDispatcher {
   private static final Logger LOG =
       Logger.getLogger(AbstractCommandDelegatingDispatcher.class.getCanonicalName());
 
-  protected void runCommands(
-      final CommandRequest event,
-      final BiFunction<EmulatorSource, CommandRequest, Set<String>> executable) {
+  protected <T> void runCommands(
+      final CommandRequest event, final BiFunction<EmulatorSource, CommandRequest, T> executable) {
     final List<CompletableFuture<Void>> collect =
         this.getEmulators().stream()
             .map(emu -> this.runOrTimeout(executable, emu, event))
@@ -51,8 +50,8 @@ public abstract class AbstractCommandDelegatingDispatcher {
     CompletableFuture.allOf(collect.toArray(CompletableFuture[]::new)).join();
   }
 
-  private CompletableFuture<Void> runOrTimeout(
-      final BiFunction<EmulatorSource, CommandRequest, Set<String>> executable,
+  private <T> CompletableFuture<Void> runOrTimeout(
+      final BiFunction<EmulatorSource, CommandRequest, T> executable,
       final EmulatorSource source,
       final CommandRequest commandRequest) {
     final Optional<String> targetDevice = commandRequest.getTargetDevice();
@@ -72,7 +71,16 @@ public abstract class AbstractCommandDelegatingDispatcher {
             (result, error) -> this.resultOrLogAndEmpty(source, commandRequest, result, error),
             this.getExecutorService())
         // handle the result over to the command.
-        .thenAccept(rsp -> commandRequest.addReturnParameters(source.getSourceName(), rsp));
+        .thenAccept(rsp -> this.doAppendReturnParameters(source, commandRequest, rsp));
+  }
+
+  private void doAppendReturnParameters(
+      final EmulatorSource source, final CommandRequest commandRequest, final CommandResponse rsp) {
+    if (commandRequest.isBinaryResponse()) {
+      commandRequest.setBinaryResponse(rsp.getBinaryReturnParameter());
+    } else {
+      commandRequest.addReturnParameters(source.getSourceName(), rsp);
+    }
   }
 
   /**
@@ -106,19 +114,37 @@ public abstract class AbstractCommandDelegatingDispatcher {
     return result;
   }
 
-  private CommandResponse wrapRuntimeException(
-      final BiFunction<EmulatorSource, CommandRequest, Set<String>> executable,
+  private <T> CommandResponse wrapRuntimeException(
+      final BiFunction<EmulatorSource, CommandRequest, T> executable,
       final EmulatorSource source,
       final CommandRequest commandRequest) {
     try {
-      final Set<String> discoveredDeviceNames = executable.apply(source, commandRequest);
+      final T discoveredDeviceNames = executable.apply(source, commandRequest);
 
-      return CommandResponse.builder()
-          .requestId(commandRequest.getRequestId())
-          .commandType(commandRequest.getCommandType())
-          .addAllReturnParameters(discoveredDeviceNames)
-          .build();
+      if (discoveredDeviceNames instanceof List) {
+        return CommandResponse.builder()
+            .requestId(commandRequest.getRequestId())
+            .commandType(commandRequest.getCommandType())
+            .addAllReturnParameters((List<String>) discoveredDeviceNames)
+            .build();
+      } else if (discoveredDeviceNames instanceof ByteBuffer) {
+        return CommandResponse.builder()
+            .requestId(commandRequest.getRequestId())
+            .commandType(commandRequest.getCommandType())
+            .binaryReturnParameter((ByteBuffer) discoveredDeviceNames)
+            .build();
+      } else {
+        throw new UnsupportedOperationException(
+            "Unknown return type class: " + discoveredDeviceNames.getClass());
+      }
+
     } catch (final RuntimeException rtEx) {
+      LOG.log(
+          Level.WARNING,
+          rtEx,
+          () ->
+              String.format(
+                  Locale.ENGLISH, "Source [%s] did throw exception.", source.getSourceName()));
       return CommandResponse.builder()
           .requestId(commandRequest.getRequestId())
           .commandType(commandRequest.getCommandType())
