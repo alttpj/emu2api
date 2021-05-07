@@ -23,8 +23,12 @@ import java.nio.channels.SelectionKey;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ReplyToVersionAction implements Consumer<SelectionKey> {
+
+  private static final Logger LOG = Logger.getLogger(ReplyToVersionAction.class.getCanonicalName());
 
   @Override
   public void accept(final SelectionKey selectionKey) {
@@ -45,7 +49,7 @@ public class ReplyToVersionAction implements Consumer<SelectionKey> {
       }
 
     } catch (final Throwable error) {
-      System.out.println(error.getMessage());
+      LOG.log(Level.SEVERE, "unexpected error reading the response.", error);
     }
   }
 

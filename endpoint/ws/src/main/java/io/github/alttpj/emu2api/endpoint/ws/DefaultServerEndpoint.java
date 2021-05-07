@@ -83,7 +83,7 @@ public class DefaultServerEndpoint {
 
   @OnMessage
   public void onMessage(final Session session, final Usb2SnesRequest message) throws IOException {
-    LOG.log(Level.INFO, "received raw message: " + message);
+    LOG.log(Level.FINER, "received raw message: " + message);
     final CommandType commandType = CommandType.getByOpCode(message.getOpcode());
     final CallbackCommandRequest commandRequest =
         new CallbackCommandRequest(
@@ -160,29 +160,34 @@ public class DefaultServerEndpoint {
 
   protected Future<Void> doSendResponse(
       final CallbackCommandRequest response, final Session session) {
+    final SessionInfo sessionInfo = SESSION_INFO.get(session);
     final Async asyncRemote = session.getAsyncRemote();
     asyncRemote.setSendTimeout(100L);
 
     if (response.isBinaryResponse()) {
       final ByteBuffer binaryResponse = response.getBinaryResponse();
+      final byte[] array = binaryResponse.array();
       LOG.log(
-          Level.INFO,
+          Level.FINE,
           () ->
               String.format(
                   Locale.ENGLISH,
-                  "sending response [%s] to session [%s].",
-                  new BigInteger(1, binaryResponse.array()).toString(16),
-                  session));
+                  "sending response [0x%s] to session [%s].",
+                  new BigInteger(1, array).toString(16),
+                  sessionInfo.getClientName()));
       return asyncRemote.sendBinary(binaryResponse);
     }
 
     final Usb2SnesResult usb2SnesResult = new Usb2SnesResult(response.getAggregatedResponses());
 
     LOG.log(
-        Level.INFO,
+        Level.FINE,
         () ->
             String.format(
-                Locale.ENGLISH, "sending response [%s] to session [%s].", usb2SnesResult, session));
+                Locale.ENGLISH,
+                "sending response [%s] to session [%s].",
+                usb2SnesResult,
+                sessionInfo.getClientName()));
 
     return asyncRemote.sendObject(usb2SnesResult);
   }

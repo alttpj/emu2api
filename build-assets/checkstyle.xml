@@ -387,6 +387,7 @@
       <property name="excludes" value="java.lang.annotation.RetentionPolicy.*"/>
 
       <property name="excludes" value="java.lang.Boolean.*"/>
+      <property name="excludes" value="java.lang.Integer.compareUnsigned" />
 
       <property name="excludes" value="javax.persistence.FetchType.*"/>
 

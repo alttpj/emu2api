@@ -22,6 +22,8 @@ import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.SelectableChannel;
 import java.nio.channels.SelectionKey;
+import java.nio.charset.StandardCharsets;
+import java.util.Locale;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -64,6 +66,17 @@ public abstract class AbstractUdpResponseReader implements Consumer<SelectionKey
 
       if (this.readCount <= 0) {
         this.setConnected(false);
+        return;
+      }
+
+      if (LOG.isLoggable(Level.FINER)) {
+        LOG.log(
+            Level.FINER,
+            () ->
+                String.format(
+                    Locale.ENGLISH,
+                    ">> %s",
+                    new String(this.getReadBuffer(), StandardCharsets.UTF_8).trim()));
       }
     } catch (final PortUnreachableException portUnreachableException) {
       if (LOG.isLoggable(Level.FINER)) {
@@ -92,14 +105,18 @@ public abstract class AbstractUdpResponseReader implements Consumer<SelectionKey
     this.connected = connected;
   }
 
-  public byte[] getReadBuffer() {
+  public final byte[] getReadBuffer() {
     if (this.readBuffer == null) {
-      return null;
+      return new byte[0];
     }
 
     final byte[] bytes = new byte[this.readCount];
     this.readBuffer.flip();
     this.readBuffer.get(bytes);
     return bytes;
+  }
+
+  public byte[] getParsedResponse() {
+    return this.getReadBuffer();
   }
 }

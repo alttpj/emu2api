@@ -26,6 +26,8 @@ import io.github.alttpj.emu2api.source.config.base.EmulatorConfig;
 import io.github.alttpj.emu2api.source.config.base.GeneralConfig;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -94,13 +96,6 @@ public class RetroArchEmulatorSource implements EmulatorSource {
 
     final RetroArchConnection connection = deviceOpt.orElseThrow();
 
-    final GenericResponseReader genericResponseReader = new GenericResponseReader(2048);
-
-    /*
-     final byte[] info2Response =
-       connection.sendCommand(genericResponseReader, "READ_CORE_RAM FFC0 128");
-    */
-
     final List<String> resultList = new ArrayList<>();
     resultList.add(connection.getVersion());
     resultList.addAll(RetroArchConnection.DEFAULT_FLAGS);
@@ -121,10 +116,15 @@ public class RetroArchEmulatorSource implements EmulatorSource {
     final RetroArchConnection connection = deviceOpt.orElseThrow();
 
     final String size = commandParameters.get(1);
-    final int length = Integer.parseInt(size, 10);
+    final int length = Integer.parseInt(size, 16);
     final GenericResponseReader reader = new GenericResponseReader(length);
+    final String addressString = commandParameters.get(0);
+    final RetroArchAddressServiceImpl addressService = new RetroArchAddressServiceImpl(true);
+    final int retroArchAddress =
+        addressService.translateAddressToRetroArch(new BigInteger(addressString, 16).intValue());
+    final String retroArchHexString = new BigDecimal(retroArchAddress).unscaledValue().toString(16);
     final String command =
-        String.format(Locale.ENGLISH, "READ_CORE_MEMORY %s %d", commandParameters.get(0), length);
+        String.format(Locale.ENGLISH, "READ_CORE_MEMORY %s %d", retroArchHexString, length);
     final byte[] connReturn = connection.sendCommand(reader, command);
 
     return ByteBuffer.wrap(connReturn);

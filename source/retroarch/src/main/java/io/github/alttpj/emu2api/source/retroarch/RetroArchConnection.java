@@ -25,6 +25,7 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.StringJoiner;
 import java.util.logging.Level;
@@ -97,6 +98,10 @@ public class RetroArchConnection {
     try (final Selector selector = Selector.open()) {
       this.channel.register(selector, SelectionKey.OP_READ);
 
+      if (LOG.isLoggable(Level.FINER)) {
+        LOG.log(Level.FINER, () -> String.format(Locale.ENGLISH, "<< %s", command));
+      }
+
       final ByteBuffer commandBuffer = ByteBuffer.wrap(command.getBytes(StandardCharsets.UTF_8));
       this.channel.write(commandBuffer);
 
@@ -111,7 +116,7 @@ public class RetroArchConnection {
       LOG.log(Level.WARNING, "cannot connect to " + this.device + "!", connectEx);
     }
 
-    return responseReader.getReadBuffer();
+    return responseReader.getParsedResponse();
   }
 
   public void close() {

@@ -16,12 +16,19 @@
 
 package io.github.alttpj.emu2api.source.retroarch;
 
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
+
 public class GenericResponseReader extends AbstractUdpResponseReader {
 
   private final int bufferSize;
+  private ByteBuffer responseData;
 
   public GenericResponseReader(final int bufferSize) {
-    this.bufferSize = Math.min(32, bufferSize);
+    this.bufferSize =
+        32 /* preamble */
+            + 1 /* whitespace */
+            + bufferSize * 3 /* hex encoded with leading space */;
   }
 
   @Override
@@ -32,5 +39,36 @@ public class GenericResponseReader extends AbstractUdpResponseReader {
   @Override
   protected void processResponse() {
     // no operation, return raw
+    final String out = new String(super.getReadBuffer(), StandardCharsets.UTF_8);
+    final String[] splits = out.split(" ", 3);
+    if (splits.length < 3) {
+      this.responseData = ByteBuffer.wrap(super.getReadBuffer());
+      return;
+    }
+
+    final String hexResponse = splits[2].replaceAll(" ", "").trim();
+    final byte[] responseAsBytes = hexStringToByteArray(hexResponse);
+    this.responseData = ByteBuffer.wrap(responseAsBytes);
+  }
+
+  @Override
+  public byte[] getParsedResponse() {
+    this.responseData.flip();
+    return this.responseData.array();
+  }
+
+  /* s must be an even-length string. */
+  public static byte[] hexStringToByteArray(final String hexIn) {
+    final int len = hexIn.length();
+    final byte[] data = new byte[len / 2];
+
+    for (int index = 0; index < len; index += 2) {
+      data[index / 2] =
+          (byte)
+              ((Character.digit(hexIn.charAt(index), 16) << 4)
+                  + Character.digit(hexIn.charAt(index + 1), 16));
+    }
+
+    return data;
   }
 }

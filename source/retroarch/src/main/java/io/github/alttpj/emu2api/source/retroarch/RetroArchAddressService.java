@@ -14,18 +14,9 @@
  * limitations under the License.
  */
 
-package io.github.alttpj.emu2api.server.meecrowave;
+package io.github.alttpj.emu2api.source.retroarch;
 
-import org.apache.meecrowave.runner.Cli;
+public interface RetroArchAddressService {
 
-public final class MeecrowaveServer {
-
-  private MeecrowaveServer() {
-    // utility class
-  }
-
-  public static void main(final String[] args) {
-    // System.setProperty("java.util.logging.manager", "org.apache.logging.log4j.jul.LogManager");
-    Cli.main(new String[] {"--logging-global-setup", "true", "--log4j2-jul-bridge", "true"});
-  }
+  int translateAddressToRetroArch(int address);
 }

@@ -44,8 +44,8 @@ public class GenericResponseReaderTest {
     genericResponseReader.accept(selKey);
 
     // then:
-    assertEquals(5, genericResponseReader.getReadBufferSize());
-    assertEquals(5, genericResponseReader.getReadBuffer().length);
+    assertEquals(48, genericResponseReader.getReadBufferSize());
+    assertEquals(5, genericResponseReader.getParsedResponse().length);
   }
 
   private int readImpl(final org.mockito.invocation.InvocationOnMock args) {
