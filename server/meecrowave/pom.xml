@@ -36,6 +36,9 @@
     <surefire.additional.args>
       -Djava.util.logging.manager=org.apache.logging.log4j.jul.LogManager
     </surefire.additional.args>
+    <app.main.class>io.github.alttpj.emu2api.server.meecrowave.MeecrowaveServer</app.main.class>
+    <app.distribution.directory>${project.build.directory}/distributions/app
+    </app.distribution.directory>
   </properties>
 
   <dependencies>
@@ -122,10 +125,89 @@
           </execution>
         </executions>
       </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifest>
+              <mainClass>${app.main.class}</mainClass>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
+
     </plugins>
   </build>
 
   <profiles>
+    <profile>
+      <id>app</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+
+      <properties>
+        <plugin.jreleaser.skip>true</plugin.jreleaser.skip>
+      </properties>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>appassembler-maven-plugin</artifactId>
+            <version>2.1.0</version>
+
+            <executions>
+              <execution>
+                <id>default-appassemble</id>
+                <goals>
+                  <goal>assemble</goal>
+                </goals>
+                <configuration>
+                  <programs>
+                    <program>
+                      <id>emu2api-app</id>
+                      <mainClass>${app.main.class}</mainClass>
+                    </program>
+                  </programs>
+
+                  <configurationDirectory>conf</configurationDirectory>
+                  <copyConfigurationDirectory>true</copyConfigurationDirectory>
+                  <includeConfigurationDirectoryInClasspath>true
+                  </includeConfigurationDirectoryInClasspath>
+                  <extraJvmArguments>-Xms64m -Xms256m</extraJvmArguments>
+                  <repositoryLayout>flat</repositoryLayout>
+                  <repositoryName>lib</repositoryName>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <version>3.3.0</version>
+            <executions>
+              <execution>
+                <phase>package</phase>
+                <goals>
+                  <goal>single</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <descriptors>
+                <descriptor>src/main/assembly/app.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+
     <profile>
       <id>config-toml</id>
       <activation>

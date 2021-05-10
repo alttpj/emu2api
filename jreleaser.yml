@@ -1,0 +1,26 @@
+project:
+  name: emu2api-app
+  version: 1.0.0-SNAPSHOT
+  description: emu2api websocket to emulator bridge
+  longDescription: emu2api websocket to emulator bridge
+  website: https://github.com/alttpj/emu2api
+  authors:
+    - Benjamin Marwell <bmarwell@gmail.com>
+  license: Apache-2
+  java:
+    groupId: io.github.alttpj.emu2api.server
+    version: 11
+    multiProject: true
+
+release:
+  github:
+    owner: alttpj
+  sign: true
+
+distributions:
+  emu2api-server-meecrowave:
+    artifacts:
+      - path: server/meecrowave/target/{{distributionName}}-{{projectVersion}}-app.zip
+
+signing:
+  active: ALWAYS
