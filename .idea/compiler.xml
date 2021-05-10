@@ -2,5 +2,8 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <addNotNullAssertions enabled="false" />
+    <bytecodeTargetLevel>
+      <module name="emu2api-app" target="11" />
+    </bytecodeTargetLevel>
   </component>
 </project>

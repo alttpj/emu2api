@@ -695,6 +695,13 @@
     </profile>
 
     <profile>
+      <id>app</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+    </profile>
+
+    <profile>
       <id>config-toml</id>
       <activation>
         <activeByDefault>true</activeByDefault>
