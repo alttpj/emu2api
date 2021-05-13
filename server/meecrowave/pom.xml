@@ -149,7 +149,7 @@
       </activation>
 
       <properties>
-        <plugin.jreleaser.skip>true</plugin.jreleaser.skip>
+        <plugin.jreleaser.skip>false</plugin.jreleaser.skip>
       </properties>
 
       <build>
@@ -201,6 +201,14 @@
               <descriptors>
                 <descriptor>src/main/assembly/app.xml</descriptor>
               </descriptors>
+            </configuration>
+          </plugin>
+
+          <plugin>
+            <groupId>org.jreleaser</groupId>
+            <artifactId>jreleaser-maven-plugin</artifactId>
+            <configuration>
+
             </configuration>
           </plugin>
         </plugins>
