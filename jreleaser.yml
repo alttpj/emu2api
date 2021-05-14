@@ -15,7 +15,7 @@ project:
 release:
   github:
     owner: alttpj
-    sign: false
+    sign: true
 
 distributions:
   emu2api-server-meecrowave:
@@ -23,4 +23,4 @@ distributions:
       - path: server/meecrowave/target/{{distributionName}}-{{projectVersion}}-app.zip
 
 signing:
-  active: NEVER
+  active: ALWAYS

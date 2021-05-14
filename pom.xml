@@ -733,8 +733,25 @@
                   <github>
                     <owner>alttpj</owner>
                     <name>emu2api</name>
+                    <sign>true</sign>
                   </github>
                 </release>
+                <sign>
+                  <active>ALWAYS</active>
+                  <armored>true</armored>
+                </sign>
+                <distributions>
+                  <distribution>
+                    <name>emu2api-meecrowave</name>
+                    <artifacts>
+                      <artifact>
+                        <path>
+                          ${project.basedir}/target/${project.artifactId}-${project.version}-app.zip
+                        </path>
+                      </artifact>
+                    </artifacts>
+                  </distribution>
+                </distributions>
               </jreleaser>
               <signing>true</signing>
               <skip>${plugin.jreleaser.skip}</skip>
